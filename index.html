@@ -219,24 +219,89 @@
         .quick-item span { font-size: 13px; font-weight: 600; color: var(--dark); text-align: center; }
 
         /* ===== FOOTER ===== */
-        .footer {
-            background: var(--dark); color: rgba(255,255,255,0.7);
-            padding: 40px 30px 20px; text-align: center;
+        .footer { background: #2a2a2a; color: #ccc; }
+        .footer-main { padding: 40px 24px 20px; max-width: 1100px; margin: 0 auto; }
+
+        .footer-section { margin-bottom: 30px; }
+        .footer-section-title {
+            font-size: 18px; font-weight: 700; color: #fff;
+            margin-bottom: 6px;
         }
-        .footer-logo { margin-bottom: 16px; }
-        .footer-logo img { height: 40px; filter: brightness(1.5); }
-        .footer-tagline { font-size: 14px; color: var(--gold); margin-bottom: 20px; }
-        .footer-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-        .footer-links a {
-            color: rgba(255,255,255,0.6); text-decoration: none;
-            font-size: 14px; transition: color 0.2s;
+        .footer-line {
+            height: 3px; border: none; margin: 0 0 18px;
+            background: linear-gradient(to left, var(--green) 40%, #555 40%);
         }
-        .footer-links a:hover { color: var(--white); }
+        html[dir="ltr"] .footer-line {
+            background: linear-gradient(to right, var(--green) 40%, #555 40%);
+        }
+
+        .footer-contact-list { list-style: none; }
+        .footer-contact-list li {
+            padding: 10px 0; font-size: 15px; color: #bbb;
+            display: flex; align-items: center; gap: 12px;
+            direction: rtl;
+        }
+        .footer-contact-list li svg {
+            width: 20px; height: 20px; fill: #888; flex-shrink: 0;
+        }
+        .footer-contact-list li span { direction: ltr; }
+
+        .footer-link-list { list-style: none; }
+        .footer-link-list li {
+            padding: 8px 0; font-size: 15px; color: #bbb;
+            cursor: pointer; transition: color 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .footer-link-list li::before { content: "\2039"; font-size: 20px; color: #888; }
+        .footer-link-list li:hover { color: var(--green-light); }
+
+        .footer-download {
+            padding: 10px 0; font-size: 15px; color: var(--green-light);
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+        }
+        .footer-download svg { width: 20px; height: 20px; fill: var(--green-light); }
+
+        .footer-visitors {
+            text-align: center; padding: 16px 0 10px;
+            font-size: 14px; color: #888;
+        }
+
+        .footer-bottom {
+            background: #222; padding: 18px 24px;
+            text-align: center; border-top: 1px solid #333;
+        }
         .footer-copy {
-            font-size: 12px; color: rgba(255,255,255,0.35);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 18px; margin-top: 10px;
+            font-size: 14px; color: #888; margin-bottom: 14px;
         }
+        .footer-copy span { color: var(--green-light); }
+
+        .footer-social {
+            display: flex; justify-content: center; gap: 18px;
+            margin-bottom: 12px;
+        }
+        .footer-social a {
+            width: 36px; height: 36px; display: flex;
+            align-items: center; justify-content: center;
+            color: #888; font-size: 18px; transition: color 0.2s;
+        }
+        .footer-social a:hover { color: #fff; }
+        .footer-social a svg { width: 20px; height: 20px; fill: currentColor; }
+
+        .footer-whatsapp {
+            font-size: 14px; color: var(--green-light);
+            font-weight: 600;
+        }
+
+        .scroll-top {
+            position: fixed; bottom: 20px; left: 20px;
+            width: 46px; height: 46px; background: var(--green);
+            color: #fff; border: none; border-radius: 6px;
+            font-size: 22px; cursor: pointer; z-index: 90;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: opacity 0.3s;
+        }
+        .scroll-top:hover { background: #145524; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
@@ -397,18 +462,83 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-logo">
-            <img src="logo.jpg" alt="بنك أم درمان الوطني">
+        <div class="footer-main">
+
+            <div class="footer-section">
+                <div class="footer-section-title" data-ar="العنوان" data-en="Address">العنوان</div>
+                <hr class="footer-line">
+                <ul class="footer-contact-list">
+                    <li>
+                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#888" stroke-width="2"/></svg>
+                        <span data-ar="الخرطوم - شارع القصر" data-en="Khartoum - Al Qasr Street">الخرطوم - شارع القصر</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#888" stroke-width="2"/><line x1="2" y1="12" x2="22" y2="12" stroke="#888" stroke-width="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" fill="none" stroke="#888" stroke-width="2"/></svg>
+                        <span>info@onb.com.sd</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" fill="none" stroke="#888" stroke-width="2"/></svg>
+                        <span>5656</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="none" stroke="#888" stroke-width="2"/><circle cx="12" cy="10" r="3" fill="none" stroke="#888" stroke-width="2"/></svg>
+                        <span data-ar="العرض علي خرائط قوقل" data-en="View on Google Maps">العرض علي خرائط قوقل</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <div class="footer-section-title" data-ar="روابط مفيدة" data-en="Useful Links">روابط مفيدة</div>
+                <hr class="footer-line">
+                <ul class="footer-link-list">
+                    <li data-ar="الخصوصية" data-en="Privacy">الخصوصية</li>
+                    <li data-ar="الشروط و الأحكام" data-en="Terms & Conditions">الشروط و الأحكام</li>
+                    <li data-ar="خريطة الموقع" data-en="Sitemap">خريطة الموقع</li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <div class="footer-section-title" data-ar="الخدمات الالكترونية" data-en="Electronic Services">الخدمات الالكترونية</div>
+                <hr class="footer-line">
+                <ul class="footer-link-list">
+                    <li data-ar="تطبيق اوو-كاش" data-en="O-Cash App">تطبيق اوو-كاش</li>
+                    <li data-ar="الرسائل المصرفية" data-en="Banking Messages">الرسائل المصرفية</li>
+                    <li data-ar="بنكي نت" data-en="Banki Net">بنكي نت</li>
+                    <li data-ar="خدمة فتح الحساب عن بعد" data-en="Remote Account Opening">خدمة فتح الحساب عن بعد</li>
+                    <li data-ar="خدمة بنكي بوت" data-en="Banki Bot Service">خدمة بنكي بوت</li>
+                </ul>
+                <div class="footer-download">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span data-ar="تحميل استمارة تحاويل صادرة بالنقد الأجنبي" data-en="Download Foreign Currency Transfer Form">تحميل استمارة تحاويل صادرة بالنقد الأجنبي</span>
+                </div>
+            </div>
+
+            <div class="footer-visitors" data-ar="زوار الموقع" data-en="Site Visitors">زوار الموقع (1,580,739)</div>
+
         </div>
-        <p class="footer-tagline" id="footerTagline">ملتزمون باستدامة التفوق</p>
-        <div class="footer-links" id="footerLinks">
-            <a href="#" data-ar="عن البنك" data-en="About Us">عن البنك</a>
-            <a href="#" data-ar="الشروط والأحكام" data-en="Terms & Conditions">الشروط والأحكام</a>
-            <a href="#" data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</a>
-            <a href="#" data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</a>
+
+        <div class="footer-bottom">
+            <p class="footer-copy" id="footerCopy">جميع الحقوق محفوظة &copy; 2024 لـ <span>بنك أم درمان الوطني</span></p>
+            <div class="footer-social">
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                </a>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+                </a>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#2a2a2a"/></svg>
+                </a>
+            </div>
+            <div class="footer-whatsapp" data-ar="قناة البنك الرسمية على الواتساب" data-en="Bank's Official WhatsApp Channel">قناة البنك الرسمية على الواتساب</div>
         </div>
-        <p class="footer-copy" id="footerCopy">&copy; 2026 بنك أم درمان الوطني. جميع الحقوق محفوظة</p>
     </footer>
+
+    <!-- Scroll to top -->
+    <button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
 
     <script>
         var isArabic = true;
@@ -438,10 +568,9 @@
             document.getElementById('servicesTitle').textContent = isArabic ? 'خدماتنا المصرفية' : 'Our Banking Services';
             document.getElementById('servicesDesc').textContent = isArabic ? 'حلول مالية شاملة تلبي جميع احتياجاتك' : 'Comprehensive financial solutions for all your needs';
 
-            document.getElementById('footerTagline').textContent = isArabic ? 'ملتزمون باستدامة التفوق' : 'Committed to Sustainable Excellence';
             document.getElementById('footerCopy').innerHTML = isArabic
-                ? '&copy; 2026 بنك أم درمان الوطني. جميع الحقوق محفوظة'
-                : '&copy; 2026 Omdurman National Bank. All rights reserved';
+                ? 'جميع الحقوق محفوظة &copy; 2024 لـ <span>بنك أم درمان الوطني</span>'
+                : 'All rights reserved &copy; 2024 <span>Omdurman National Bank</span>';
 
             document.querySelectorAll('[data-ar]').forEach(function(el) {
                 el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
