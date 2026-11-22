@@ -63,12 +63,12 @@
             background: none; border: none; cursor: pointer;
             display: flex; align-items: center; gap: 6px;
             padding: 8px 14px; border-radius: 8px;
-            font-size: 14px; font-weight: 700; color: var(--green);
-            font-family: 'Inter', sans-serif;
+            font-size: 14px; font-weight: 600; color: var(--green);
+            font-family: 'Cairo', sans-serif;
             transition: background 0.2s;
         }
         .lang-btn:hover { background: var(--green-pale); }
-        .lang-btn svg { width: 22px; height: 22px; }
+        .lang-btn svg { width: 24px; height: 24px; }
 
         /* ===== SIDEBAR ===== */
         .sidebar-overlay {
@@ -359,7 +359,7 @@
                 <line x1="2" y1="12" x2="22" y2="12"/>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
-            <span id="langLabel">EN</span>
+            <span id="langLabel">اللغة</span>
         </button>
     </header>
 
@@ -585,7 +585,7 @@
             var html = document.documentElement;
             html.lang = isArabic ? 'ar' : 'en';
             html.dir = isArabic ? 'rtl' : 'ltr';
-            document.getElementById('langLabel').textContent = isArabic ? 'EN' : 'AR';
+            document.getElementById('langLabel').textContent = isArabic ? 'اللغة' : 'Lang';
 
             document.getElementById('heroTitle').textContent = isArabic
                 ? 'مرحباً بك في بنك أم درمان الوطني'
