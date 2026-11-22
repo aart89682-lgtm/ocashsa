@@ -217,19 +217,35 @@
             margin-bottom: 16px;
         }
         .modal .specs li {
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
-            justify-content: space-between;
-        }
-        .modal .specs li span:first-child {
-            color: var(--gray);
+            align-items: center;
+            gap: 12px;
+            line-height: 1.5;
+            color: var(--dark);
             font-weight: 600;
         }
-        .modal .specs li span:last-child {
-            font-weight: 700;
-            color: var(--dark);
+        .modal .specs li:last-child { border-bottom: none; }
+        .modal .specs li .spec-icon {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            background: var(--green-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal .specs li .spec-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .modal .btn-choose {
             margin-top: 8px;
@@ -279,14 +295,46 @@
             <img id="modalImg" src="" alt="">
             <h3 id="modalName"></h3>
             <ul class="specs">
-                <li><span data-ar="الحجم" data-en="Size">الحجم</span><span>49MM</span></li>
-                <li><span data-ar="المادة" data-en="Material">المادة</span><span data-ar="تيتانيوم الدرجة 5" data-en="Titanium Grade 5">تيتانيوم الدرجة 5</span></li>
-                <li><span data-ar="الشاشة" data-en="Display">الشاشة</span><span data-ar="AMOLED عالية الوضوح" data-en="AMOLED HD">AMOLED عالية الوضوح</span></li>
-                <li><span data-ar="البطارية" data-en="Battery">البطارية</span><span data-ar="تدوم حتى 72 ساعة" data-en="Up to 72 hours">تدوم حتى 72 ساعة</span></li>
-                <li><span data-ar="المقاومة" data-en="Water Resistance">المقاومة</span><span data-ar="مقاومة للماء IP68" data-en="Water Resistant IP68">مقاومة للماء IP68</span></li>
-                <li><span data-ar="الاتصال" data-en="Connectivity">الاتصال</span><span>Bluetooth 5.3 + NFC</span></li>
-                <li><span data-ar="المستشعرات" data-en="Sensors">المستشعرات</span><span data-ar="نبض القلب، أكسجين الدم" data-en="Heart Rate, Blood Oxygen">نبض القلب، أكسجين الدم</span></li>
-                <li><span data-ar="الحزام" data-en="Band">الحزام</span><span data-ar="ستانلس ستيل ميلانو" data-en="Milanese Stainless Steel">ستانلس ستيل ميلانو</span></li>
+                <!-- Compatible with smartphones -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></div>
+                    <span data-ar="متوافقة مع الهواتف الذكية — تدعم Android و iPhone" data-en="Compatible with smartphones — supports Android & iPhone">متوافقة مع الهواتف الذكية — تدعم Android و iPhone</span>
+                </li>
+                <!-- SMS support -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <span data-ar="دعم الرسائل SMS — استقبال وإدارة الرسائل النصية" data-en="SMS support — receive and manage text messages">دعم الرسائل SMS — استقبال وإدارة الرسائل النصية</span>
+                </li>
+                <!-- SIM card -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M18 2H10L4 8v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M10 2v6H4"/></svg></div>
+                    <span data-ar="دعم شريحة SIM — إمكانية استخدام شريحة اتصال" data-en="SIM card support — use a SIM card for connectivity">دعم شريحة SIM — إمكانية استخدام شريحة اتصال</span>
+                </li>
+                <!-- Wi-Fi -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg></div>
+                    <span data-ar="اتصال لاسلكي Wi-Fi — للاتصال بالشبكات اللاسلكية" data-en="Wi-Fi connectivity — connect to wireless networks">اتصال لاسلكي Wi-Fi — للاتصال بالشبكات اللاسلكية</span>
+                </li>
+                <!-- Premium design -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8.5 8.5l.01 0"/><path d="M15.5 15.5l.01 0"/></svg></div>
+                    <span data-ar="تصميم عصري وفاخر — مظهر أنيق يناسب الاستخدام اليومي والمناسبات" data-en="Modern luxury design — elegant look for daily use and occasions">تصميم عصري وفاخر — مظهر أنيق يناسب الاستخدام اليومي والمناسبات</span>
+                </li>
+                <!-- HD display -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                    <span data-ar="شاشة عالية الوضوح — عرض واضح وسهل للمعلومات" data-en="HD display — clear and easy information viewing">شاشة عالية الوضوح — عرض واضح وسهل للمعلومات</span>
+                </li>
+                <!-- Multi-purpose -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                    <span data-ar="متعددة الاستخدامات — مناسبة للعمل والتنقل والحياة اليومية" data-en="Multi-purpose — suitable for work, commuting and daily life">متعددة الاستخدامات — مناسبة للعمل والتنقل والحياة اليومية</span>
+                </li>
+                <!-- Comfortable -->
+                <li>
+                    <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <span data-ar="مريحة وسهلة الاستخدام — تجمع بين التكنولوجيا والأناقة" data-en="Comfortable and easy to use — combines technology and elegance">مريحة وسهلة الاستخدام — تجمع بين التكنولوجيا والأناقة</span>
+                </li>
             </ul>
             <a href="login.html" class="btn-choose" id="modalBtn" data-ar="اختر هذه الساعة" data-en="Choose This Watch">اختر هذه الساعة</a>
         </div>
