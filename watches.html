@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ساعات O-Cash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #1a6e2e;
+            --green-light: #2e9647;
+            --green-pale: #e8f5ec;
+            --gold: #c5a846;
+            --gold-dark: #a68d2e;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --gray-light: #f5f6f8;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--gray-light);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .back-btn {
+            background: none; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            color: var(--green); font-family: 'Cairo', sans-serif;
+            font-size: 14px; font-weight: 700;
+        }
+        .back-btn svg { width: 22px; height: 22px; stroke: var(--green); fill: none; stroke-width: 2; }
+        .header-title {
+            font-size: 18px; font-weight: 800; color: var(--dark);
+        }
+        .header-lang {
+            background: none; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+            color: var(--green); font-family: 'Cairo', sans-serif;
+            font-size: 14px; font-weight: 600;
+        }
+        .header-lang svg { width: 22px; height: 22px; stroke: var(--green); fill: none; stroke-width: 2; }
+
+        /* Banner */
+        .page-banner { width: 100%; overflow: hidden; }
+        .page-banner img { width: 100%; display: block; }
+
+        /* Page Title */
+        .page-hero {
+            background: linear-gradient(135deg, #145524 0%, #1a6e2e 50%, #2e9647 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--white);
+        }
+        .page-hero h1 {
+            font-size: 26px; font-weight: 800; margin-bottom: 6px;
+        }
+        .page-hero p {
+            font-size: 14px; opacity: 0.85; line-height: 1.6;
+        }
+
+        /* Watch Grid */
+        .watches-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 20px 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .watch-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+        .watch-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .watch-img-wrap {
+            background: var(--white);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .watch-img-wrap img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .watch-info {
+            padding: 10px 12px 14px;
+            text-align: center;
+        }
+        .watch-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .watch-color {
+            font-size: 11px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        .watch-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .btn-choose {
+            display: block;
+            width: 100%;
+            padding: 9px;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-choose:hover { background: var(--green-light); }
+        .btn-details {
+            display: block;
+            width: 100%;
+            padding: 9px;
+            background: none;
+            color: var(--green);
+            border: 1.5px solid var(--green);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-details:hover { background: var(--green-pale); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 24px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #f0f0f0;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+        }
+        .modal img {
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            margin-bottom: 16px;
+        }
+        .modal h3 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+        .modal .specs {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+        .modal .specs li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .modal .specs li span:first-child {
+            color: var(--gray);
+            font-weight: 600;
+        }
+        .modal .specs li span:last-child {
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .modal .btn-choose {
+            margin-top: 8px;
+            padding: 13px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 400px) {
+            .watches-grid { grid-template-columns: 1fr; padding: 16px 12px; }
+            .watch-img-wrap img { max-height: 240px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            <span data-ar="الرئيسية" data-en="Home">الرئيسية</span>
+        </button>
+        <span class="header-title" id="headerTitle" data-ar="ساعات O-Cash" data-en="O-Cash Watches">ساعات O-Cash</span>
+        <button class="header-lang" onclick="toggleLang()">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+            <span id="langLabel">اللغة</span>
+        </button>
+    </div>
+
+    <!-- Banner -->
+    <div class="page-banner">
+        <img src="watches-banner.jpg" alt="O-Cash Smart Watch">
+    </div>
+
+    <!-- Hero -->
+    <div class="page-hero">
+        <h1 id="heroTitle" data-ar="اختر ساعتك المفضلة" data-en="Choose Your Watch">اختر ساعتك المفضلة</h1>
+        <p id="heroDesc" data-ar="ساعات ذكية O-Cash — 49MM تيتانيوم الدرجة الخامسة بألوان متعددة" data-en="O-Cash Smart Watches — 49MM Titanium Grade 5 in multiple colors">ساعات ذكية O-Cash — 49MM تيتانيوم الدرجة الخامسة بألوان متعددة</p>
+    </div>
+
+    <!-- Watches Grid -->
+    <div class="watches-grid" id="watchesGrid"></div>
+
+    <!-- Details Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <img id="modalImg" src="" alt="">
+            <h3 id="modalName"></h3>
+            <ul class="specs">
+                <li><span data-ar="الحجم" data-en="Size">الحجم</span><span>49MM</span></li>
+                <li><span data-ar="المادة" data-en="Material">المادة</span><span data-ar="تيتانيوم الدرجة 5" data-en="Titanium Grade 5">تيتانيوم الدرجة 5</span></li>
+                <li><span data-ar="الشاشة" data-en="Display">الشاشة</span><span data-ar="AMOLED عالية الوضوح" data-en="AMOLED HD">AMOLED عالية الوضوح</span></li>
+                <li><span data-ar="البطارية" data-en="Battery">البطارية</span><span data-ar="تدوم حتى 72 ساعة" data-en="Up to 72 hours">تدوم حتى 72 ساعة</span></li>
+                <li><span data-ar="المقاومة" data-en="Water Resistance">المقاومة</span><span data-ar="مقاومة للماء IP68" data-en="Water Resistant IP68">مقاومة للماء IP68</span></li>
+                <li><span data-ar="الاتصال" data-en="Connectivity">الاتصال</span><span>Bluetooth 5.3 + NFC</span></li>
+                <li><span data-ar="المستشعرات" data-en="Sensors">المستشعرات</span><span data-ar="نبض القلب، أكسجين الدم" data-en="Heart Rate, Blood Oxygen">نبض القلب، أكسجين الدم</span></li>
+                <li><span data-ar="الحزام" data-en="Band">الحزام</span><span data-ar="ستانلس ستيل ميلانو" data-en="Milanese Stainless Steel">ستانلس ستيل ميلانو</span></li>
+            </ul>
+            <a href="login.html" class="btn-choose" id="modalBtn" data-ar="اختر هذه الساعة" data-en="Choose This Watch">اختر هذه الساعة</a>
+        </div>
+    </div>
+
+    <script>
+        var isArabic = true;
+
+        var watches = [
+            { img: "watches/brown.jpg", ar: "بني", en: "Brown" },
+            { img: "watches/orange.jpg", ar: "برتقالي", en: "Orange" },
+            { img: "watches/silver.jpg", ar: "فضي", en: "Silver" },
+            { img: "watches/rosegold.jpg", ar: "روز قولد", en: "Rose Gold" },
+            { img: "watches/blue.jpg", ar: "أزرق", en: "Blue" },
+            { img: "watches/black.jpg", ar: "أسود", en: "Black" },
+            { img: "watches/orange2.jpg", ar: "برتقالي غامق", en: "Deep Orange" },
+            { img: "watches/pink.jpg", ar: "وردي", en: "Pink" },
+            { img: "watches/gold.jpg", ar: "ذهبي", en: "Gold" },
+            { img: "watches/green.jpg", ar: "أخضر", en: "Green" },
+            { img: "watches/army.jpg", ar: "أخضر عسكري", en: "Army Green" },
+            { img: "watches/red.jpg", ar: "أحمر", en: "Red" },
+            { img: "watches/champagne.jpg", ar: "شامبين", en: "Champagne" },
+            { img: "watches/gray.jpg", ar: "رمادي", en: "Gray" },
+            { img: "watches/yellow.jpg", ar: "أصفر ذهبي", en: "Yellow Gold" }
+        ];
+
+        function renderWatches() {
+            var grid = document.getElementById('watchesGrid');
+            grid.innerHTML = '';
+            watches.forEach(function(w, i) {
+                var colorName = isArabic ? w.ar : w.en;
+                var watchTitle = isArabic
+                    ? 'ساعة O-Cash — ' + colorName
+                    : 'O-Cash Watch — ' + colorName;
+                var chooseText = isArabic ? 'اختر ساعتك' : 'Choose Watch';
+                var detailsText = isArabic ? 'تفاصيل الساعة' : 'Watch Details';
+
+                var card = document.createElement('div');
+                card.className = 'watch-card';
+                card.innerHTML =
+                    '<div class="watch-img-wrap"><img src="' + w.img + '" alt="' + watchTitle + '"></div>' +
+                    '<div class="watch-info">' +
+                        '<div class="watch-name">' + watchTitle + '</div>' +
+                        '<div class="watch-color">' + (isArabic ? '49MM تيتانيوم' : '49MM Titanium') + ' — ' + colorName + '</div>' +
+                        '<div class="watch-btns">' +
+                            '<a href="login.html" class="btn-choose">' + chooseText + '</a>' +
+                            '<button class="btn-details" onclick="openModal(' + i + ')">' + detailsText + '</button>' +
+                        '</div>' +
+                    '</div>';
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(index) {
+            var w = watches[index];
+            var colorName = isArabic ? w.ar : w.en;
+            document.getElementById('modalImg').src = w.img;
+            document.getElementById('modalName').textContent = isArabic
+                ? 'ساعة O-Cash — ' + colorName
+                : 'O-Cash Watch — ' + colorName;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleLang() {
+            isArabic = !isArabic;
+            var html = document.documentElement;
+            html.lang = isArabic ? 'ar' : 'en';
+            html.dir = isArabic ? 'rtl' : 'ltr';
+            document.getElementById('langLabel').textContent = isArabic ? 'اللغة' : 'Lang';
+            document.querySelectorAll('[data-ar]').forEach(function(el) {
+                el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+            renderWatches();
+        }
+
+        renderWatches();
+    </script>
+
+</body>
+</html>
