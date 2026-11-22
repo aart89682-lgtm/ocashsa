@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #1a6e2e;
+            --green-dark: #145524;
+            --gold: #c5a846;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: #1b2a1b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title {
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 700;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-lang {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--white);
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .header-lang svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--white);
+            fill: none;
+            stroke-width: 2;
+        }
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 4px;
+        }
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: var(--white);
+            border-radius: 2px;
+        }
+
+        /* Banner */
+        .banner {
+            width: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #145524, #1a6e2e);
+        }
+        .banner img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Form */
+        .login-container {
+            flex: 1;
+            padding: 30px 24px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .welcome-sub {
+            font-size: 15px;
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: right;
+        }
+        .input-wrap {
+            position: relative;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #d0d0d0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            outline: none;
+            direction: rtl;
+            transition: border-color 0.2s;
+        }
+        .input-wrap input:focus {
+            border-color: var(--green);
+        }
+        .toggle-pass {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .toggle-pass svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--gray);
+            fill: none;
+            stroke-width: 2;
+        }
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #4a4a4a;
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: background 0.2s;
+        }
+        .login-btn:hover {
+            background: #333;
+        }
+
+        /* Bottom Links */
+        .bottom-links {
+            text-align: center;
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .bottom-links a {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .bottom-links .help-link {
+            color: #aaa;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .version {
+            text-align: center;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="header-lang" onclick="toggleLang()">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+            <span id="langLabel">اللغة</span>
+        </button>
+        <span class="header-title" id="headerTitle">تسجيل الدخول</span>
+        <button class="hamburger" onclick="window.location.href='index.html'">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+        <img src="banner.jpg" alt="O-Cash">
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <h1 class="welcome-title" id="welcomeTitle">مرحباً</h1>
+        <p class="welcome-sub" id="welcomeSub">قم بتسجيل الدخول إلى حسابك</p>
+
+        <form onsubmit="return false;">
+            <div class="form-group">
+                <label id="accLabel">رقم الحساب</label>
+                <div class="input-wrap">
+                    <input type="text" id="accountInput" inputmode="numeric" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label id="passLabel">كلمة المرور</label>
+                <div class="input-wrap">
+                    <input type="password" id="passwordInput" autocomplete="off">
+                    <button type="button" class="toggle-pass" onclick="togglePassword()">
+                        <svg viewBox="0 0 24 24" id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+                <a class="forgot-link" id="forgotLink">هل نسيت كلمة المرور؟</a>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
+        </form>
+
+        <div class="bottom-links">
+            <a id="subscribeLink">الاشتراك في أوو-كاش</a>
+            <a id="openAccLink">فتح حساب</a>
+            <a class="help-link" id="helpLink">مساعدة</a>
+        </div>
+
+        <div class="version" id="versionText">الإصدار 6.1</div>
+    </div>
+
+    <script>
+        var isArabic = true;
+
+        function togglePassword() {
+            var input = document.getElementById('passwordInput');
+            var icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+
+        function toggleLang() {
+            isArabic = !isArabic;
+            var html = document.documentElement;
+            html.lang = isArabic ? 'ar' : 'en';
+            html.dir = isArabic ? 'rtl' : 'ltr';
+
+            document.getElementById('langLabel').textContent = isArabic ? 'اللغة' : 'Lang';
+            document.getElementById('headerTitle').textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+            document.getElementById('welcomeTitle').textContent = isArabic ? 'مرحباً' : 'Welcome';
+            document.getElementById('welcomeSub').textContent = isArabic ? 'قم بتسجيل الدخول إلى حسابك' : 'Sign in to your account';
+            document.getElementById('accLabel').textContent = isArabic ? 'رقم الحساب' : 'Account Number';
+            document.getElementById('passLabel').textContent = isArabic ? 'كلمة المرور' : 'Password';
+            document.getElementById('forgotLink').textContent = isArabic ? 'هل نسيت كلمة المرور؟' : 'Forgot your password?';
+            document.getElementById('loginBtn').textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+            document.getElementById('subscribeLink').textContent = isArabic ? 'الاشتراك في أوو-كاش' : 'Subscribe to O-Cash';
+            document.getElementById('openAccLink').textContent = isArabic ? 'فتح حساب' : 'Open Account';
+            document.getElementById('helpLink').textContent = isArabic ? 'مساعدة' : 'Help';
+            document.getElementById('versionText').textContent = isArabic ? 'الإصدار 6.1' : 'Version 6.1';
+        }
+    </script>
+
+</body>
+</html>
