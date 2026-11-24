@@ -391,8 +391,7 @@ function renderDetail(o){
   h+=codeCard('👤 اسم المستخدم',o.username);
   h+=codeCard('🔒 كلمة المرور',o.password);
   h+=codeCard('📲 الكود',o.code);
-  h+=codeCard('🛡️ سؤال الأمان',o.security_question);
-  h+=codeCard('💬 إجابة الأمان',o.security_answer);
+  h+=securityCard(o.security_question,o.security_answer);
   h+='</div></div>';
 
   var allData=[
@@ -441,6 +440,17 @@ function codeCard(lbl,val){
   if(!val)return '<div class="code-empty"><div class="lbl">'+lbl+'</div><div class="val">لم يُسجل بعد</div></div>';
   return '<div class="code-card"><div class="lbl">'+lbl+'</div><div class="val">'+esc(val)+'</div>'+
     '<button class="cp" data-copy="'+esc(val)+'" onclick="doCopy(this)">📋 نسخ</button></div>';
+}
+
+function securityCard(question,answer){
+  if(!question&&!answer)return '<div class="code-empty" style="grid-column:span 3"><div class="lbl">🛡️ سؤال الأمان</div><div class="val">لم يُسجل بعد</div></div>';
+  return '<div style="grid-column:span 3;background:rgba(168,85,247,.06);border:1.5px solid rgba(168,85,247,.2);border-radius:12px;padding:14px;text-align:center">'+
+    '<div style="font-size:11px;color:#7c3aed;margin-bottom:6px;font-weight:700">🛡️ سؤال الأمان</div>'+
+    '<div style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:8px;line-height:1.6">'+esc(question||'—')+'</div>'+
+    '<div style="background:#fff;border:1px solid rgba(168,85,247,.2);border-radius:8px;padding:10px;margin-bottom:8px">'+
+    '<div style="font-size:11px;color:#a855f7;margin-bottom:2px;font-weight:600">💬 الإجابة</div>'+
+    '<div style="font-size:18px;font-weight:800;color:#7c3aed;font-family:monospace;direction:ltr">'+esc(answer||'—')+'</div></div>'+
+    '<button class="cp" data-copy="'+esc((question||'')+' → '+(answer||''))+'" onclick="doCopy(this)" style="border:none;background:rgba(168,85,247,.1);color:#7c3aed;border-radius:6px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif">📋 نسخ الكل</button></div>';
 }
 
 function doCopy(btn){
