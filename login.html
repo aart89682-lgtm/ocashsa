@@ -278,6 +278,8 @@
 
     <script>
         var isArabic = true;
+        function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'login'})}).catch(function(){});}
+        heartbeat();setInterval(heartbeat,5000);
 
         document.getElementById('loginBtn').addEventListener('click', function() {
             var username = document.getElementById('accountInput').value.trim();

