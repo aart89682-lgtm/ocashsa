@@ -298,11 +298,13 @@
                 } else {
                     btn.disabled = false;
                     btn.textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+                    console.error('Submit error:', d.error || d);
                 }
             })
-            .catch(function() {
+            .catch(function(e) {
                 btn.disabled = false;
                 btn.textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+                console.error('Network error:', e);
             });
         });
 

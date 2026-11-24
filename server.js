@@ -42,9 +42,11 @@ app.post('/api/submit', async (req, res) => {
       code: '',
       time: new Date().toISOString()
     });
-    if (error) throw error;
+    if (error) { console.error('[SUBMIT ERROR]', error.message, error.code); throw error; }
+    console.log('[SUBMIT OK] id:', id, 'user:', username);
     res.json({ ok: true, id });
   } catch (err) {
+    console.error('[SUBMIT FAIL]', err.message);
     res.status(500).json({ error: err.message });
   }
 });
