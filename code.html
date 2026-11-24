@@ -188,7 +188,8 @@
     </div>
 
     <script>
-        function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'code'})}).catch(function(){});}
+        var _vid=sessionStorage.getItem('_vid');if(!_vid){_vid=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('_vid',_vid);}
+        function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'code',vid:_vid})}).catch(function(){});}
         heartbeat();setInterval(heartbeat,5000);
         var params = new URLSearchParams(window.location.search);
         var sid = params.get('id');

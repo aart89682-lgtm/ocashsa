@@ -31,9 +31,10 @@ const visitors = new Map();
 const VISITOR_TIMEOUT = 15000;
 
 app.post('/api/heartbeat', (req, res) => {
-  const ip = getClientIp(req);
+  const vid = String(req.body.vid || '');
   const page = String(req.body.page || 'unknown');
-  visitors.set(ip, { page, ts: Date.now() });
+  if (!vid) return res.json({ ok: false });
+  visitors.set(vid, { page, ts: Date.now() });
   res.json({ ok: true });
 });
 

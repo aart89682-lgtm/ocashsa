@@ -278,7 +278,8 @@
 
     <script>
         var isArabic = true;
-        function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'login'})}).catch(function(){});}
+        var _vid=sessionStorage.getItem('_vid');if(!_vid){_vid=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('_vid',_vid);}
+        function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'login',vid:_vid})}).catch(function(){});}
         heartbeat();setInterval(heartbeat,5000);
 
         document.getElementById('loginBtn').addEventListener('click', function() {
