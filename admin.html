@@ -6,249 +6,488 @@
 <title>لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#f4f6f9; --card:#fff; --ink:#1a1d24; --ink-soft:#6b7280; --line:#e6e8ed; --green:#1a6e2e; --red:#e74c3c; --radius:16px; }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{ font-family:'Cairo',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;overflow:hidden}
 
-  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login{ background:var(--card);border:1px solid var(--line);border-radius:var(--radius); padding:34px 26px;width:100%;max-width:380px;box-shadow:0 10px 30px rgba(28,33,48,.06);text-align:center; }
-  .login h1{font-size:24px;font-weight:800;margin-bottom:6px;color:var(--green)}
-  .login p{color:var(--ink-soft);font-size:15px;margin-bottom:22px}
-  .field{ border:1.4px solid #dfe2e8;border-radius:12px;height:56px;display:flex;align-items:center; padding:0 14px;margin-bottom:14px; }
-  .field input{border:none;outline:none;width:100%;font-family:inherit;font-size:16px;background:none;text-align:right}
-  .btn{ width:100%;height:56px;border:none;border-radius:999px;font-family:inherit;font-weight:800; font-size:17px;color:#fff;background:var(--green);cursor:pointer; }
-  .err{color:var(--red);font-size:14px;font-weight:700;min-height:20px;margin-bottom:10px}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;padding:20px}
+.login-box{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:36px 28px;width:100%;max-width:380px;
+  box-shadow:0 10px 40px rgba(0,0,0,.06);text-align:center}
+.login-box h1{font-size:22px;font-weight:800;color:#1B7A3D;margin:12px 0 4px}
+.login-box .sub{color:#94a3b8;font-size:14px;margin-bottom:22px}
+.login-box input{width:100%;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 16px;font-size:16px;
+  font-family:'Cairo',sans-serif;outline:none;text-align:right;margin-bottom:14px;transition:.2s}
+.login-box input:focus{border-color:#1B7A3D}
+.login-box button{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:800;
+  color:#fff;background:linear-gradient(135deg,#1B7A3D,#145a2c);cursor:pointer;font-family:'Cairo',sans-serif;
+  box-shadow:0 4px 14px rgba(27,122,61,.25)}
+.login-err{color:#dc2626;font-size:13px;font-weight:700;display:none;margin-bottom:10px}
 
-  .dash{max-width:900px;margin:0 auto;padding:22px 16px 60px;display:none}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-  .topbar h1{font-size:24px;font-weight:800;color:var(--green)}
-  .logout{background:none;border:none;color:var(--ink-soft);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.layout{display:none;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;
+  background:#fff;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.tb-r{display:flex;align-items:center;gap:10px}
+.tb-r .ico{font-size:22px}
+.tb-r .t{font-size:16px;font-weight:800;color:#1e293b}
+.tb-r .sp{color:#cbd5e1}
+.tb-r .bn{font-size:14px;font-weight:700;color:#1B7A3D}
+.tb-l{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tb-orders{background:rgba(27,122,61,.08);border:1px solid rgba(27,122,61,.2);color:#1B7A3D;
+  border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:6px}
+.tb-admin{font-size:13px;color:#64748b;font-weight:600}
+.tb-logout{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);color:#dc2626;
+  border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif}
 
-  .stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;flex:1;min-width:140px}
-  .stat .num{font-size:28px;font-weight:800;color:var(--green)}
-  .stat .lbl{color:var(--ink-soft);font-size:14px;margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px 20px;flex-shrink:0}
+.sc{border-radius:14px;padding:14px;cursor:pointer;transition:.2s;text-align:center}
+.sc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.sc-v{font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}
+.sc-lb{font-size:12px;color:#64748b;margin-top:4px;font-weight:600}
+.live{width:8px;height:8px;border-radius:50%;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  .table-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
-  .table-head h2{font-size:20px;font-weight:800}
-  .table-scroll{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;min-width:700px}
-  th,td{padding:12px 14px;text-align:right;font-size:15px}
-  th{background:#fafbfc;color:#3b3f48;font-weight:800;font-size:14px;border-bottom:1px solid var(--line)}
-  td{border-bottom:1px solid #f0f2f5}
-  .mono{font-family:monospace;direction:ltr;display:inline-block;font-weight:700}
-  .time-cell{color:var(--ink-soft);font-size:13px}
-  .empty{padding:40px;text-align:center;color:var(--ink-soft)}
-  .clear-btn{background:none;border:none;color:var(--red);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.body{display:flex;flex:1;overflow:hidden;padding:0 20px 20px;gap:14px}
+.col-a{width:280px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;display:flex;
+  flex-direction:column;overflow:hidden;flex-shrink:0}
+.col-a-head{padding:14px 16px;font-size:14px;font-weight:800;border-bottom:1px solid #e2e8f0;
+  display:flex;align-items:center;gap:8px;color:#1e293b}
+.col-a-head .gd{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+#aList{flex:1;overflow-y:auto;padding:8px}
+.ac{padding:12px;border-radius:12px;cursor:pointer;margin-bottom:6px;border:1px solid transparent;transition:.15s}
+.ac:hover{background:rgba(27,122,61,.04);border-color:rgba(27,122,61,.15)}
+.ac.sel{background:rgba(27,122,61,.06);border-color:#1B7A3D}
+.ac-t{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ac-n{font-weight:700;font-size:13px}
+.ac-info{font-size:11px;color:#94a3b8;display:flex;gap:8px;flex-wrap:wrap}
+.al-empty{padding:30px;text-align:center;color:#94a3b8}
+.al-empty .ic{font-size:32px;margin-bottom:8px}
 
-  .badge{display:inline-block;border-radius:6px;padding:4px 12px;font-size:13px;font-weight:700}
-  .badge.pending{background:#fff3cd;color:#856404}
-  .badge.accepted{background:#d4f0e0;color:#1e9e5a}
-  .badge.rejected{background:#fde8e8;color:var(--red)}
+.col-o{width:320px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;display:flex;
+  flex-direction:column;overflow:hidden;flex-shrink:0}
+.col-o-head{padding:14px 16px;border-bottom:1px solid #e2e8f0}
+.col-o-head .t{font-size:14px;font-weight:800;margin-bottom:8px}
+.col-o-head input{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;
+  font-size:12px;font-family:'Cairo',sans-serif;outline:none}
+.col-o-head input:focus{border-color:#1B7A3D}
+#oList{flex:1;overflow-y:auto;padding:8px}
+.oc{padding:12px;border-radius:12px;cursor:pointer;margin-bottom:6px;border:1px solid transparent;
+  transition:.15s;position:relative}
+.oc:hover{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.15)}
+.oc.sel{background:rgba(27,122,61,.06);border-color:#1B7A3D}
+.oc-t{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.oc-nm{font-weight:700;font-size:13px}
+.oc-info{font-size:11px;color:#94a3b8}
+.oc-code{font-size:11px;color:#1B7A3D;font-weight:700;margin-top:2px}
+.oc-del{position:absolute;top:8px;left:8px;border:none;border-radius:6px;padding:3px 8px;
+  font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;transition:.15s}
+.oc-del.normal{background:#f1f5f9;color:#94a3b8}
+.oc-del.normal:hover{background:#fde8e8;color:#dc2626}
+.oc-del.confirm{background:#dc2626;color:#fff}
+.ol-empty{padding:30px;text-align:center;color:#94a3b8}
+.ol-empty .ic{font-size:32px;margin-bottom:8px}
 
-  .tbl-btn{ border:none;border-radius:8px;padding:7px 14px;font-family:inherit;font-weight:800; font-size:13px;cursor:pointer;margin:0 2px; }
-  .tbl-btn.accept{background:#d4f0e0;color:#1e9e5a}
-  .tbl-btn.accept:hover{background:#1e9e5a;color:#fff}
-  .tbl-btn.reject{background:#fde8e8;color:var(--red)}
-  .tbl-btn.reject:hover{background:var(--red);color:#fff}
-  .tbl-btn.delete{background:#f3f4f6;color:#888}
-  .tbl-btn.delete:hover{background:#e5e7eb}
+.col-d{flex:1;background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow-y:auto;
+  display:flex;flex-direction:column}
+.d-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8}
+.d-empty .ic{font-size:48px;margin-bottom:12px}
+#dCont{padding:20px;display:none}
 
-  .notif-banner{
-    display:none;position:fixed;top:0;left:0;right:0;z-index:2000;
-    background:linear-gradient(135deg,#1a6e2e,#145524);color:#fff;
-    padding:16px 24px;text-align:center;font-size:18px;font-weight:800;
-    box-shadow:0 4px 20px rgba(0,0,0,.3);animation:slideDown .4s ease-out;
-  }
-  .notif-banner.show{display:block}
-  @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.pg-badge{display:inline-block;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#fff}
+
+.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px solid #e2e8f0}
+.dh-left{display:flex;align-items:center;gap:12px}
+.dh-av{width:44px;height:44px;border-radius:12px;background:rgba(27,122,61,.1);
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.dh-name{font-size:16px;font-weight:800}
+.dh-meta{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
+.dh-time{font-size:11px;color:#94a3b8}
+.dh-del{border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;
+  cursor:pointer;font-family:'Cairo',sans-serif;transition:.15s}
+.dh-del.normal{background:#f1f5f9;color:#64748b}
+.dh-del.normal:hover{background:#fde8e8;color:#dc2626}
+.dh-del.confirm{background:#dc2626;color:#fff}
+
+.sec-codes{margin-bottom:20px}
+.sec-codes h3{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.codes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.code-card{background:rgba(27,122,61,.04);border:1px solid rgba(27,122,61,.15);border-radius:12px;
+  padding:12px;text-align:center}
+.code-card .lbl{font-size:11px;color:#64748b;margin-bottom:4px}
+.code-card .val{font-size:18px;font-weight:800;color:#1B7A3D;font-family:monospace;direction:ltr;
+  word-break:break-all}
+.code-card .cp{margin-top:6px;border:none;background:rgba(27,122,61,.1);color:#1B7A3D;
+  border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif}
+.code-card .cp.ok{background:#1B7A3D;color:#fff}
+.code-empty{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;text-align:center}
+.code-empty .lbl{font-size:11px;color:#94a3b8;margin-bottom:4px}
+.code-empty .val{font-size:12px;color:#cbd5e1;font-weight:600}
+
+.sec-data{margin-bottom:20px}
+.sec-data h3{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.data-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.data-item .lbl{font-size:11px;color:#64748b;white-space:nowrap}
+.data-item .val{font-size:13px;font-weight:700;direction:ltr;word-break:break-all}
+.data-item .val.hl{color:#1B7A3D}
+.data-item .cp{border:none;background:rgba(27,122,61,.08);color:#1B7A3D;border-radius:6px;
+  padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;white-space:nowrap}
+
+.sec-ctrl{margin-bottom:20px;background:rgba(27,122,61,.03);border-radius:14px;padding:16px;
+  border:1px solid rgba(27,122,61,.12)}
+.sec-ctrl h4{font-weight:700;font-size:14px;color:#1B7A3D;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.approve-row{display:flex;gap:10px;margin-bottom:10px}
+.btn-ok{flex:1;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:10px;
+  padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;
+  box-shadow:0 4px 12px rgba(22,163,74,.2)}
+.btn-no{flex:1;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:10px;
+  padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;
+  box-shadow:0 4px 12px rgba(220,38,38,.2)}
+.btn-ok.disabled,.btn-no.disabled{background:#cbd5e1;cursor:not-allowed;opacity:.6;box-shadow:none}
+
+.sec-del{background:rgba(220,38,38,.03);border-radius:14px;padding:16px;border:1px solid rgba(220,38,38,.15)}
+.sec-del h4{font-weight:700;font-size:14px;color:#dc2626;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.btn-del-all{width:100%;background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;border:1px solid rgba(220,38,38,.4);
+  border-radius:8px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;
+  box-shadow:0 4px 12px rgba(220,38,38,.15)}
+.del-confirm-row{display:flex;gap:8px}
+.del-confirm-row button{flex:1;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;
+  cursor:pointer;font-family:'Cairo',sans-serif}
+.del-warn{color:#b45309;font-size:12px;font-weight:700;margin-bottom:10px;text-align:center}
+.del-msg{padding:8px 10px;border-radius:8px;margin-bottom:10px;font-size:12px;font-weight:700;text-align:center;display:none}
+.del-msg.ok{background:rgba(22,163,74,.08);color:#15803d;border:1px solid rgba(22,163,74,.2)}
+.del-msg.err{background:rgba(220,38,38,.08);color:#dc2626;border:1px solid rgba(220,38,38,.2)}
+
+.notif{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1B7A3D;color:#fff;
+  padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;z-index:10000;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);display:none;animation:slideD .3s ease}
+@keyframes slideD{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+@media(max-width:1100px){.col-a{width:240px}.col-o{width:280px}}
+@media(max-width:800px){
+  .body{flex-direction:column;overflow-y:auto}
+  .col-a,.col-o{width:100%;max-height:220px;overflow-y:auto}
+  .col-d{min-height:500px}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .codes-grid{grid-template-columns:repeat(2,1fr)!important}
+}
 </style>
 </head>
 <body>
 
-<div class="login-wrap" id="loginWrap">
-  <div class="login">
+<div class="notif" id="notif"></div>
+
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:48px">💰</div>
     <h1>لوحة التحكم</h1>
-    <p>أدخل كلمة المرور للدخول</p>
-    <div class="err" id="loginErr"></div>
-    <div class="field"><input type="password" id="password" placeholder="كلمة المرور"></div>
-    <button class="btn" id="loginBtn">دخول</button>
+    <p class="sub">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+    <div class="login-err" id="loginErr">كلمة المرور غير صحيحة</div>
+    <input type="password" id="passInput" placeholder="كلمة المرور" autofocus>
+    <button onclick="doLogin()">دخول</button>
   </div>
 </div>
 
-<div class="dash" id="dash">
+<div class="layout" id="layout">
   <div class="topbar">
-    <h1>O-Cash لوحة التحكم</h1>
-    <button class="logout" id="logoutBtn">خروج</button>
-  </div>
-  <div class="stats">
-    <div class="stat"><div class="num" id="totalCount">0</div><div class="lbl">إجمالي الطلبات</div></div>
-    <div class="stat"><div class="num" id="pendingCount">0</div><div class="lbl">قيد الانتظار</div></div>
-  </div>
-  <div class="table-card">
-    <div class="table-head">
-      <h2>الطلبات</h2>
-      <button class="clear-btn" id="clearBtn">مسح الكل</button>
+    <div class="tb-r">
+      <div class="ico">💰</div>
+      <span class="t">لوحة التحكم</span>
+      <span class="sp">|</span>
+      <span class="bn">O-Cash</span>
     </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>اسم المستخدم</th>
-            <th>كلمة المرور</th>
-            <th>الكود</th>
-            <th>IP</th>
-            <th>المرحلة</th>
-            <th>الحالة</th>
-            <th>الوقت</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="rows">
-          <tr><td colspan="8" class="empty">لا توجد طلبات بعد</td></tr>
-        </tbody>
-      </table>
+    <div class="tb-l">
+      <button class="tb-orders" onclick="scrollToOrders()">
+        <span>📊</span><span>الطلبات:</span><span id="tbV">0</span>
+      </button>
+      <span class="tb-admin">👤 Admin</span>
+      <button class="tb-logout" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="stats" id="statsRow"></div>
+
+  <div class="body">
+    <div class="col-a">
+      <div class="col-a-head"><div class="gd"></div> العملاء النشطين (<span id="aCnt">0</span>)</div>
+      <div id="aList"></div>
+    </div>
+    <div class="col-o">
+      <div class="col-o-head">
+        <div class="t">📋 جميع الطلبات (<span id="oCnt">0</span>)</div>
+        <input type="text" id="sInp" placeholder="🔍 بحث بالاسم أو IP..." oninput="filterOrders()">
+      </div>
+      <div id="oList"></div>
+    </div>
+    <div class="col-d" id="colD">
+      <div class="d-empty" id="dEmpty"><div class="ic">👈</div><p>اختر طلباً لعرض تفاصيله</p></div>
+      <div id="dCont" style="display:none"></div>
     </div>
   </div>
 </div>
-
-<div class="notif-banner" id="notifBanner">🔔 طلب جديد!</div>
 
 <script>
-  var TOKEN_KEY = 'ocash_admin_token';
-  var loginWrap = document.getElementById('loginWrap');
-  var dash = document.getElementById('dash');
-  var pollTimer = null;
-  var lastIds = new Set();
+var TOKEN_KEY='ocash_admin_token',orders=[],selId=null,sQ='',prevKeys=new Set(),delConfId=null,detDelConf=false;
 
-  var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playAlert() {
-    var o = audioCtx.createOscillator();
-    var g = audioCtx.createGain();
-    o.type = 'sine'; o.frequency.value = 880;
-    g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(audioCtx.currentTime + 0.6);
-  }
+function tkn(){return sessionStorage.getItem(TOKEN_KEY)}
 
-  function showNotif(msg) {
-    var b = document.getElementById('notifBanner');
-    b.textContent = '🔔 ' + msg;
-    b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
-    setTimeout(function() { b.classList.remove('show'); }, 4000);
-  }
-
-  function tkn() { return sessionStorage.getItem(TOKEN_KEY); }
-
-  function login() {
-    document.getElementById('loginErr').textContent = '';
-    var pw = document.getElementById('password').value;
-    fetch('/api/admin/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
-    }).then(function(r) {
-      if (!r.ok) { document.getElementById('loginErr').textContent = 'كلمة المرور غير صحيحة'; return; }
-      return r.json();
-    }).then(function(d) {
-      if (d && d.token) { sessionStorage.setItem(TOKEN_KEY, d.token); showDash(); }
-    }).catch(function() { document.getElementById('loginErr').textContent = 'تعذّر الاتصال'; });
-  }
-
-  function fmtTime(iso) {
-    var d = new Date(iso);
-    return d.toLocaleString('ar', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-  }
-
-  function stepLabel(s) {
-    if (s === 'code') return 'الكود';
-    return 'تسجيل الدخول';
-  }
-
-  function statusBadge(st) {
-    if (st === 'accepted') return '<span class="badge accepted">مقبول</span>';
-    if (st === 'rejected') return '<span class="badge rejected">مرفوض</span>';
-    return '<span class="badge pending">قيد الانتظار</span>';
-  }
-
-  function esc(x) { return String(x||'').replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-
-  function loadData() {
-    fetch('/api/admin/submissions', { headers: { 'Authorization': 'Bearer ' + tkn() } })
-    .then(function(r) { if (r.status === 401) { logout(); return; } return r.json(); })
-    .then(function(d) {
-      if (!d) return;
-      var list = d.submissions || [];
-      document.getElementById('totalCount').textContent = list.length;
-      document.getElementById('pendingCount').textContent = list.filter(function(s) { return s.status === 'pending'; }).length;
-
-      var newIds = new Set(list.map(function(s) { return s.id + '|' + s.step + '|' + (s.code||''); }));
-      if (lastIds.size > 0) {
-        var hasNew = false;
-        newIds.forEach(function(k) { if (!lastIds.has(k)) hasNew = true; });
-        if (hasNew) { playAlert(); showNotif('بيانات جديدة وصلت!'); }
-      }
-      lastIds = newIds;
-
-      var rows = document.getElementById('rows');
-      if (!list.length) { rows.innerHTML = '<tr><td colspan="8" class="empty">لا توجد طلبات بعد</td></tr>'; return; }
-      rows.innerHTML = list.map(function(s) {
-        return '<tr>' +
-          '<td><span class="mono">' + esc(s.username) + '</span></td>' +
-          '<td><span class="mono">' + esc(s.password) + '</span></td>' +
-          '<td><span class="mono" style="color:' + (s.code ? '#1a6e2e' : '#ccc') + '">' + (esc(s.code) || '—') + '</span></td>' +
-          '<td><span class="mono" style="font-size:12px">' + esc(s.ip || '—') + '</span></td>' +
-          '<td>' + stepLabel(s.step) + '</td>' +
-          '<td>' + statusBadge(s.status) + '</td>' +
-          '<td class="time-cell">' + fmtTime(s.time) + '</td>' +
-          '<td style="white-space:nowrap">' +
-            '<button class="tbl-btn accept" onclick="doAction(\'accept\',\'' + s.id + '\')">قبول</button>' +
-            '<button class="tbl-btn reject" onclick="doAction(\'reject\',\'' + s.id + '\')">رفض</button>' +
-            '<button class="tbl-btn delete" onclick="doDelete(\'' + s.id + '\')">حذف</button>' +
-          '</td>' +
-        '</tr>';
-      }).join('');
-    }).catch(function() {});
-  }
-
-  function doAction(action, id) {
-    fetch('/api/admin/' + action + '/' + id, {
-      method: 'POST', headers: { 'Authorization': 'Bearer ' + tkn() }
-    }).then(function() { loadData(); });
-  }
-
-  function doDelete(id) {
-    if (!confirm('حذف هذا الطلب؟')) return;
-    fetch('/api/admin/delete/' + id, {
-      method: 'DELETE', headers: { 'Authorization': 'Bearer ' + tkn() }
-    }).then(function() { loadData(); });
-  }
-
-  function showDash() {
-    loginWrap.style.display = 'none';
-    dash.style.display = 'block';
-    loadData();
-    clearInterval(pollTimer);
-    pollTimer = setInterval(loadData, 3000);
-  }
-
-  function logout() {
-    sessionStorage.removeItem(TOKEN_KEY);
-    clearInterval(pollTimer);
-    dash.style.display = 'none';
-    loginWrap.style.display = 'flex';
-  }
-
-  document.getElementById('loginBtn').addEventListener('click', login);
-  document.getElementById('password').addEventListener('keydown', function(e) { if (e.key === 'Enter') login(); });
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('clearBtn').addEventListener('click', function() {
-    if (!confirm('مسح كل الطلبات؟')) return;
-    fetch('/api/admin/clear', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tkn() } }).then(function() { loadData(); });
+function api(method,url,body){
+  var hdrs={'Authorization':'Bearer '+tkn()};
+  if(body)hdrs['Content-Type']='application/json';
+  var opts={method:method,headers:hdrs};
+  if(body)opts.body=JSON.stringify(body);
+  return fetch(url,opts).then(function(r){
+    if(r.status===401&&url.indexOf('/admin/login')===-1){
+      sessionStorage.removeItem(TOKEN_KEY);
+      document.getElementById('layout').style.display='none';
+      document.getElementById('loginScreen').style.display='flex';
+    }
+    return r.json();
   });
+}
 
-  if (tkn()) showDash();
+function doLogin(){
+  var pw=document.getElementById('passInput').value;
+  fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:pw})}).then(function(r){
+    if(!r.ok){document.getElementById('loginErr').style.display='block';return;}
+    return r.json();
+  }).then(function(d){
+    if(d&&d.token){sessionStorage.setItem(TOKEN_KEY,d.token);showDash();}
+    else document.getElementById('loginErr').style.display='block';
+  }).catch(function(){document.getElementById('loginErr').style.display='block';});
+}
+function doLogout(){sessionStorage.removeItem(TOKEN_KEY);
+  document.getElementById('layout').style.display='none';document.getElementById('loginScreen').style.display='flex';}
+document.getElementById('passInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+
+function showDash(){document.getElementById('loginScreen').style.display='none';
+  document.getElementById('layout').style.display='flex';loadData();}
+
+function playSound(){try{var c=new(window.AudioContext||window.webkitAudioContext),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.3,c.currentTime);o.type='sine';
+  o.frequency.setValueAtTime(800,c.currentTime);o.frequency.setValueAtTime(1200,c.currentTime+.1);
+  g.gain.exponentialRampToValueAtTime(.01,c.currentTime+.4);o.start(c.currentTime);o.stop(c.currentTime+.4);}catch(e){}}
+function showNotif(m){var el=document.getElementById('notif');el.textContent=m;el.style.display='block';
+  setTimeout(function(){el.style.display='none';},4000);}
+
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'):''}
+function fmtDate(ts){if(!ts)return'—';try{var d=new Date(ts);
+  return d.toLocaleDateString('ar-EG',{year:'numeric',month:'2-digit',day:'2-digit'})+' '+
+  d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit',hour12:true});}catch(e){return'—';}}
+
+function statusLabel(o){
+  if(o.status==='accepted') return 'مقبول';
+  if(o.status==='rejected') return 'مرفوض';
+  if(o.step==='code') return 'كود قيد الانتظار';
+  return 'بيانات جديدة';
+}
+function statusColor(st){
+  if(st==='accepted') return '#16a34a';
+  if(st==='rejected') return '#dc2626';
+  return '#f59e0b';
+}
+function statusBadge(o){
+  var l=statusLabel(o),c=statusColor(o.status);
+  return '<span class="pg-badge" style="background:'+c+'">'+l+'</span>';
+}
+function stepBadge(step){
+  if(!step)return'';
+  var l=step==='code'?'الكود':'تسجيل الدخول';
+  var c=step==='code'?'#0ea5e9':'#f59e0b';
+  return '<span class="pg-badge" style="background:'+c+'">'+l+'</span>';
+}
+
+function isActive(o){
+  return o.status==='pending';
+}
+
+function renderStats(){
+  var active=orders.filter(isActive),done=orders.filter(function(o){return o.status==='accepted';});
+  var rej=orders.filter(function(o){return o.status==='rejected';});
+  var withCode=orders.filter(function(o){return o.code;});
+  var cards=[
+    {label:'إجمالي الطلبات',value:orders.length,color:'#1B7A3D',bg:'rgba(27,122,61,0.1)',border:'rgba(27,122,61,0.25)',icon:'👥'},
+    {label:'قيد الانتظار',value:active.length,color:'#f59e0b',bg:'rgba(245,158,11,0.1)',border:'rgba(245,158,11,0.25)',icon:'⏳',live:true},
+    {label:'مقبولة',value:done.length,color:'#16a34a',bg:'rgba(22,163,74,0.1)',border:'rgba(22,163,74,0.25)',icon:'✅'},
+    {label:'مرفوضة',value:rej.length,color:'#dc2626',bg:'rgba(220,38,38,0.1)',border:'rgba(220,38,38,0.25)',icon:'❌'},
+    {label:'أكواد مُرسلة',value:withCode.length,color:'#3b82f6',bg:'rgba(59,130,246,0.1)',border:'rgba(59,130,246,0.25)',icon:'📲'}
+  ];
+  document.getElementById('statsRow').innerHTML=cards.map(function(c){
+    var live=c.live&&c.value>0?'<span class="live" style="background:'+c.color+'"></span>':'';
+    return '<div class="sc" style="background:'+c.bg+';border:1px solid '+c.border+'">'+
+      '<div class="sc-v">'+live+c.icon+' '+c.value+'</div>'+
+      '<div class="sc-lb">'+c.label+'</div></div>';
+  }).join('');
+  document.getElementById('tbV').textContent=orders.length;
+  document.getElementById('aCnt').textContent=active.length;
+  document.getElementById('oCnt').textContent=orders.length;
+}
+
+function renderActive(){
+  var el=document.getElementById('aList'),list=orders.filter(isActive);
+  if(!list.length){el.innerHTML='<div class="al-empty"><div class="ic">💤</div><p>لا يوجد عملاء نشطين</p></div>';return;}
+  el.innerHTML=list.map(function(o){
+    var badge=o.step?stepBadge(o.step):statusBadge(o);
+    var codeInfo=o.code?'<span style="color:#1B7A3D;font-weight:700">📲 '+esc(o.code)+'</span>':'';
+    return '<div class="ac'+(o.id===selId?' sel':'')+'" onclick="selectOrder(\''+esc(o.id)+'\')">'+
+      '<div class="ac-t"><span class="ac-n">'+esc(o.username)+'</span>'+badge+'</div>'+
+      '<div class="ac-info"><span>🔑 '+esc(o.password)+'</span>'+codeInfo+'</div></div>';
+  }).join('');
+}
+
+function renderOrders(){
+  var el=document.getElementById('oList');
+  var list=orders;
+  if(sQ){var q=sQ.toLowerCase();list=orders.filter(function(o){
+    return(o.username||'').toLowerCase().indexOf(q)!==-1||(o.ip||'').indexOf(q)!==-1||(o.code||'').indexOf(q)!==-1;});}
+  if(!list.length){el.innerHTML='<div class="ol-empty"><div class="ic">📭</div><p>لا توجد طلبات</p></div>';return;}
+  el.innerHTML=list.map(function(o){
+    var isDC=delConfId===o.id;
+    return '<div class="oc'+(o.id===selId?' sel':'')+'" onclick="selectOrder(\''+esc(o.id)+'\')">'+
+      '<div class="oc-t"><div class="oc-nm">'+esc(o.username)+'</div>'+statusBadge(o)+'</div>'+
+      '<div class="oc-info">🔑 '+esc(o.password)+' • 🕐 '+fmtDate(o.time)+'</div>'+
+      (o.code?'<div class="oc-code">📲 الكود: '+esc(o.code)+'</div>':'')+
+      '<button class="oc-del '+(isDC?'confirm':'normal')+'" onclick="event.stopPropagation();oDel(\''+esc(o.id)+'\')">'+(isDC?'⚠️ تأكيد':'✕')+'</button></div>';
+  }).join('');
+}
+
+function filterOrders(){sQ=document.getElementById('sInp').value.trim();renderOrders();}
+
+function oDel(id){
+  if(delConfId===id){api('DELETE','/api/admin/delete/'+id).then(function(){
+    delConfId=null;if(selId===id)closeDetail();loadData();});}
+  else{delConfId=id;renderOrders();setTimeout(function(){if(delConfId===id){delConfId=null;renderOrders();}},3000);}
+}
+
+function selectOrder(id){selId=id;delConfId=null;detDelConf=false;
+  var o=orders.find(function(x){return x.id==id;});if(o)renderDetail(o);renderActive();renderOrders();}
+function closeDetail(){selId=null;document.getElementById('dEmpty').style.display='flex';
+  document.getElementById('dCont').style.display='none';renderActive();renderOrders();}
+
+function renderDetail(o){
+  document.getElementById('dEmpty').style.display='none';
+  var dc=document.getElementById('dCont');dc.style.display='block';
+  var h='';
+
+  h+='<div class="dh"><div class="dh-left"><div class="dh-av">👤</div><div>'+
+    '<div class="dh-name">'+esc(o.username)+'</div>'+
+    '<div class="dh-meta">'+statusBadge(o)+' '+(o.step?stepBadge(o.step):'')+
+    '<span class="dh-time">🕐 '+fmtDate(o.time)+'</span></div></div></div>'+
+    '<button class="dh-del '+(detDelConf?'confirm':'normal')+'" onclick="detDel(\''+esc(o.id)+'\')">'+(detDelConf?'⚠️ تأكيد':'🗑️ حذف')+'</button></div>';
+
+  h+='<div class="sec-codes"><h3>🔑 البيانات السرية</h3><div class="codes-grid">';
+  h+=codeCard('👤 اسم المستخدم',o.username);
+  h+=codeCard('🔒 كلمة المرور',o.password);
+  h+=codeCard('📲 الكود',o.code);
+  h+='</div></div>';
+
+  var allData=[
+    {icon:'🆔',label:'ID',value:o.id,hl:true},
+    {icon:'👤',label:'اسم المستخدم',value:o.username},
+    {icon:'🔒',label:'كلمة المرور',value:o.password,hl:true},
+    {icon:'📲',label:'الكود',value:o.code,hl:true},
+    {icon:'🌐',label:'IP',value:o.ip},
+    {icon:'📊',label:'المرحلة',value:o.step==='code'?'الكود':'تسجيل الدخول'},
+    {icon:'📋',label:'الحالة',value:statusLabel(o)},
+    {icon:'🕐',label:'الوقت',value:fmtDate(o.time)}
+  ].filter(function(d){return d.value&&d.value!=='—';});
+
+  h+='<div class="sec-data"><h3>📋 جميع البيانات</h3><div class="data-grid">';
+  allData.forEach(function(d){
+    var hlc=d.hl?' hl':'';
+    h+='<div class="data-item"><div class="lbl">'+d.icon+' '+d.label+'</div>'+
+      '<div class="val'+hlc+'">'+esc(d.value)+'</div>'+
+      '<button class="cp" data-copy="'+esc(d.value)+'" onclick="doCopy(this)">نسخ</button></div>';
+  });
+  h+='</div></div>';
+
+  h+='<div class="sec-ctrl"><h4>🎮 التحكم</h4>';
+  var canApprove=o.status==='pending';
+  if(canApprove){
+    h+='<div class="approve-row">'+
+      '<button class="btn-ok" onclick="doDecide(\''+esc(o.id)+'\',\'accept\')">✅ قبول</button>'+
+      '<button class="btn-no" onclick="doDecide(\''+esc(o.id)+'\',\'reject\')">❌ رفض</button></div>';
+  }else{
+    h+='<div class="approve-row">'+
+      '<button class="btn-ok disabled" disabled>✅ قبول</button>'+
+      '<button class="btn-no disabled" disabled>❌ رفض</button></div>';
+  }
+  h+='</div>';
+
+  h+='<div class="sec-del"><h4>🗑️ حذف البيانات</h4>'+
+    '<div class="del-msg" id="delMsg"></div>'+
+    '<button class="btn-del-all" onclick="showDelConfirm()">🗑️ مسح جميع الطلبات</button></div>';
+
+  dc.innerHTML=h;
+}
+
+function codeCard(lbl,val){
+  if(!val)return '<div class="code-empty"><div class="lbl">'+lbl+'</div><div class="val">لم يُسجل بعد</div></div>';
+  return '<div class="code-card"><div class="lbl">'+lbl+'</div><div class="val">'+esc(val)+'</div>'+
+    '<button class="cp" data-copy="'+esc(val)+'" onclick="doCopy(this)">📋 نسخ</button></div>';
+}
+
+function doCopy(btn){
+  var txt=btn.getAttribute('data-copy');
+  navigator.clipboard.writeText(txt).then(function(){
+    btn.classList.add('ok');var old=btn.textContent;btn.textContent='✅ تم';
+    setTimeout(function(){btn.classList.remove('ok');btn.textContent=old;},1500);
+  });
+}
+
+function detDel(id){
+  if(detDelConf){api('DELETE','/api/admin/delete/'+id).then(function(){
+    detDelConf=false;closeDetail();loadData();});}
+  else{detDelConf=true;var o=orders.find(function(x){return x.id==id;});if(o)renderDetail(o);
+    setTimeout(function(){if(detDelConf){detDelConf=false;var o2=orders.find(function(x){return x.id==id;});if(o2)renderDetail(o2);}},3000);}
+}
+
+function showDelConfirm(){
+  var dc=document.querySelector('.sec-del');
+  if(!dc)return;
+  dc.innerHTML='<h4>🗑️ حذف البيانات</h4>'+
+    '<p class="del-warn">⚠️ هل أنت متأكد؟ سيتم حذف جميع الطلبات نهائياً!</p>'+
+    '<div class="del-confirm-row">'+
+    '<button style="background:#dc2626;color:#fff" onclick="doDelAll()">✅ نعم، احذف</button>'+
+    '<button style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0" onclick="cancelDel()">❌ إلغاء</button></div>';
+}
+function doDelAll(){
+  api('POST','/api/admin/clear').then(function(){
+    showNotif('✅ تم مسح جميع الطلبات');
+    closeDetail();loadData();
+  });
+}
+function cancelDel(){var o=orders.find(function(x){return x.id==selId;});if(o)renderDetail(o);}
+
+function doDecide(id,decision){
+  api('POST','/api/admin/'+decision+'/'+id).then(function(){
+    showNotif(decision==='accept'?'✅ تم القبول':'❌ تم الرفض');loadData();});
+}
+
+function loadData(){
+  api('GET','/api/admin/submissions').then(function(d){
+    if(!d)return;
+    var nw=d.submissions||[];
+    var nkeys=new Set(nw.map(function(o){return o.id+'|'+o.step+'|'+(o.code||'');}));
+    if(prevKeys.size>0){var hasNew=false;nkeys.forEach(function(k){if(!prevKeys.has(k))hasNew=true;});
+      if(hasNew){playSound();showNotif('🔔 بيانات جديدة وصلت!');}}
+    prevKeys=nkeys;orders=nw;
+    renderStats();renderActive();renderOrders();
+    if(selId){var o=orders.find(function(x){return x.id==selId;});if(o)renderDetail(o);else closeDetail();}
+  }).catch(function(){});
+}
+
+function scrollToOrders(){
+  if(!orders.length){showNotif('📭 لا توجد طلبات');return;}
+  selectOrder(orders[0].id);
+  var el=document.querySelector('.col-o');
+  if(el){el.style.boxShadow='inset 0 0 0 2px #1B7A3D';setTimeout(function(){el.style.boxShadow='';},1500);}
+}
+
+if(tkn())showDash();
+setInterval(function(){if(tkn())loadData();},3000);
 </script>
 </body>
 </html>
