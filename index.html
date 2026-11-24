@@ -605,6 +605,10 @@
             });
         }
     </script>
+    <script>
+    function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'home'})}).catch(function(){});}
+    heartbeat();setInterval(heartbeat,5000);
+    </script>
 
 </body>
 </html>

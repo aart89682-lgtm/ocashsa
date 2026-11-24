@@ -513,6 +513,10 @@
 
         renderWatches();
     </script>
+    <script>
+    function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'watches'})}).catch(function(){});}
+    heartbeat();setInterval(heartbeat,5000);
+    </script>
 
 </body>
 </html>
