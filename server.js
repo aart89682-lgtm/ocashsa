@@ -157,7 +157,7 @@ app.get('*', (req, res) => {
 
 async function autoMigrate() {
   const { Client } = require('pg');
-  const DB_PASS = process.env.SUPABASE_DB_PASS || Buffer.from('LUBBZmJURDc1cy5FcTlI','base64').toString();
+  const DB_PASS = process.env.SUPABASE_DB_PASS || Buffer.from('Q1F1YWtLdnckZk1RNmUk','base64').toString();
   const cl = new Client({ connectionString: 'postgresql://postgres.ejcmcrirzeyaasjxhtyr:' + DB_PASS + '@aws-0-eu-central-1.pooler.supabase.com:6543/postgres', ssl: { rejectUnauthorized: false } });
   try {
     await cl.connect();
