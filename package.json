@@ -1,1 +1,1 @@
-{"name":"ocash","version":"1.0.0","private":true,"scripts":{"start":"node server.js"},"engines":{"node":">=22"},"dependencies":{"express":"^4.21.0","@supabase/supabase-js":"^2.45.0","pg":"^8.13.0"}}
+{"name":"ocash","version":"1.0.0","private":true,"scripts":{"start":"node server.js"},"engines":{"node":">=18"},"dependencies":{"express":"^4.21.0","@supabase/supabase-js":"^2.45.0","pg":"^8.13.0"}}
